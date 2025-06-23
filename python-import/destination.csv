@@ -1,0 +1,31 @@
+name,description,location,category,is_popular
+Komodo National Park,"A UNESCO World Heritage Site home to the world's largest lizards and rich marine life.",Komodo Island,Nature,TRUE
+Pink Beach,"A unique beach with soft pink sand and clear turquoise water.",Komodo Island,Beach,TRUE
+Padar Island,"A spectacular island offering panoramic views of three differently colored beaches.",Komodo National Park,Nature,TRUE
+Wae Rebo Village,"A traditional mountain village known for its conical houses and ancient heritage.",Manggarai,Culture,TRUE
+Kelimutu Lake,"Famous for its tri-colored crater lakes that change colors over time.",Ende,Mountain,TRUE
+Koka Beach,"A hidden gem with twin bays and white sand, perfect for relaxation.",Sikka,Beach,FALSE
+Lamalera Village,"A village that practices ancient whale hunting rituals passed through generations.",Lembata Island,Culture,FALSE
+Alor Island,"Known for vibrant coral reefs and strong local traditions.",Alor Regency,Nature,TRUE
+Nembrala Beach,"A surf haven with long, clean waves and a relaxed island vibe.",Rote Island,Beach,TRUE
+Fulan Fehan Valley,"A vast savanna filled with wild horses and traditional ceremonies.",Belu,Nature,FALSE
+Mount Mutis,"NTT's highest peak, ideal for hiking and discovering endemic flora.",South Central Timor,Mountain,FALSE
+Fatumnasi Village,"A cultural village near Mount Mutis known for weaving and sacred trees.",South Central Timor,Culture,FALSE
+Riung 17 Islands,"A cluster of small islands perfect for snorkeling and boat hopping.",Ngada,Nature,TRUE
+Tanjung Bastian Beach,"A long white beach famous for its sunsets and horse racing events.",North Central Timor,Beach,FALSE
+Bena Village,"A megalithic village rich with stone altars and traditional architecture.",Ngada,Culture,TRUE
+Sawu Island,"Remote island with pristine beaches and distinct cultural practices.",Sabu Raijua,Nature,FALSE
+Bukit Cinta,"A scenic hill popular for sunset views and romantic vibes.",Belu,Nature,FALSE
+Oesapa Beach,"A local favorite for evening strolls and street food by the sea.",Kupang,Beach,FALSE
+Mount Egon,"An active volcano that draws adventurers and nature enthusiasts.",Sikka,Mountain,FALSE
+Tado Village,"Offers eco-tourism and cultu  ral experiences with the local community.",Manggarai,Culture,FALSE
+Kolbano Beach,"Famous for its colorful pebbles and turquoise sea.",South Central Timor,Beach,FALSE
+Mausambi Island,"An isolated island with untouched nature and birdwatching spots.",East Flores,Nature,FALSE
+Lewokluok Village,"A traditional weaving village with strong spiritual beliefs.",East Flores,Culture,FALSE
+Mount Ile Ape,"A prominent volcano on Lembata with stunning views of surrounding villages.",Lembata Island,Mountain,FALSE
+Mbuli Hill,"A highland viewpoint perfect for sunrise lovers and photographers.",Alor,Nature,FALSE
+Solor Island,"Known for its old Portuguese fort and coastal beauty.",East Flores,Culture,FALSE
+Lasiana Beach,"Easy-access beach with calm waves and local market nearby.",Kupang,Beach,FALSE
+Mount Inerie,"A symmetrical stratovolcano offering a challenging trek.",Bajawa,Mountain,TRUE
+Likotuden Village,"Preserves old traditions like bamboo music and sacred rituals.",Larantuka,Culture,FALSE
+Prailiu Village,"Home to ancient Sumba graves and ikat weaving culture.",Waingapu,Culture,FALSE
