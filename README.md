@@ -9,7 +9,7 @@
 
 # 🌴 Wonderful Indonesia – NTT
 
-A tourism web platform for **East Nusa Tenggara (NTT)** built with **Laravel 10**, **Tailwind CSS**, and **Vite**.  
+A tourism web platform for **East Nusa Tenggara (NTT)** built with **Laravel 11**, **Tailwind CSS**, and **Vite**.  
 This application promotes cultural destinations, offers hotel booking, and allows users to book tour packages via a simple UI with an admin backend.
 
 ---
@@ -31,7 +31,7 @@ This application promotes cultural destinations, offers hotel booking, and allow
 
 ## 🧭 Tech Stack
 
-- Backend: **Laravel 10**, **FilamentPHP**
+- Backend: **Laravel 11**, **FilamentPHP**
 - Frontend: **Tailwind CSS**, **Blade**, **Vite**
 - Database: **MySQL 8+**
 - Payment: **Midtrans (Transfer & QRIS)**
@@ -41,22 +41,48 @@ This application promotes cultural destinations, offers hotel booking, and allow
 
 ## 📁 Folder Structure Overview
 
+```plaintext
+.
 ├── app/
-│ ├── Models/
-│ ├── Http/Controllers/
-│ └── Filament/Resources/
+│   ├── Console/
+│   ├── Exceptions/
+│   ├── Filament/
+│   │   └── Resources/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   ├── Middleware/
+│   ├── Models/
+│   └── Providers/
+├── bootstrap/
+│   └── app.php
+├── config/
+│   ├── app.php
+│   └── ... (config files)
 ├── database/
-│ └── migrations/
+│   ├── factories/
+│   ├── migrations/
+│   └── seeders/
 ├── public/
+│   └── index.php
 ├── resources/
-│ └── views/
+│   ├── css/
+│   ├── js/
+│   └── views/
 ├── routes/
-│ └── web.php
+│   ├── web.php
+│   └── api.php
+├── storage/
+│   ├── app/
+│   ├── framework/
+│   └── logs/
+├── tests/
+│   └── Feature/
+│   └── Unit/
 ├── .env.example
+├── artisan
+├── composer.json
+├── package.json
 ├── vite.config.js
-
-yaml
-Copy code
 
 ---
 
