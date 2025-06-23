@@ -106,9 +106,6 @@
                     </tr>
                     @if (abs($calculatedTotal - $booking->total_price) > 0.01)
                         <tr>
-                            <td colspan="2" style="padding: 8px 0; color: #dc2626; font-size: 13px; text-align: center;">
-                                Note: Calculated total (Rp{{ number_format($calculatedTotal, 0, ',', '.') }}) differs from stored total (Rp{{ number_format($booking->total_price, 0, ',', '.') }}). Please contact support.
-                            </td>
                         </tr>
                     @endif
                 </table>

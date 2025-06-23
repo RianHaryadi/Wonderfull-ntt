@@ -3,31 +3,33 @@
 @section('title', 'Home')
 
 @section('content')
-<!-- Hero Section -->
+<!-- Enhanced Hero Section -->
 <section id="home" class="relative h-screen flex items-center justify-center text-white overflow-hidden">
     <div class="absolute inset-0">
         <img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?ixlib=rb-4.0.3&auto=format&fit=crop&w=2094&q=80" 
              class="w-full h-full object-cover brightness-50" alt="NTT Beach Landscape" loading="lazy">
         <div class="absolute inset-0 bg-gradient-to-r from-blue-900/70 to-teal-700/70"></div>
     </div>
+    
     <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
         <h1 class="text-4xl md:text-7xl font-extrabold mb-6 leading-tight animate__animated animate__fadeInUp">
-            Unveil the <span class="text-yellow-300">Secret Wonders</span> of Eastern Indonesia
+            Unveil the <span class="text-yellow-300 bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-yellow-500">Secret Wonders</span> of Eastern Indonesia
         </h1>
         <p class="text-lg md:text-2xl mb-8 text-gray-100 animate__animated animate__fadeInUp animate__delay-1s">
             Embark on a journey through pristine beaches, vibrant cultures, and awe-inspiring landscapes in East Nusa Tenggara.
         </p>
         <div class="flex flex-wrap justify-center gap-4 animate__animated animate__fadeInUp animate__delay-2s">
-            <a href="#destinations" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full transition duration-300 transform hover:scale-110 shadow-lg">
-                Discover Destinations
+            <a href="#destinations" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-xl">
+                <i class="fas fa-map-marked-alt mr-2"></i> Discover Destinations
             </a>
-            <a href="#culture" class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-900 text-white font-bold py-4 px-8 rounded-full transition duration-300 transform hover:scale-110 shadow-lg">
-                Immerse in Culture
+            <a href="#culture" class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-900 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-xl">
+                <i class="fas fa-masks-theater mr-2"></i> Immerse in Culture
             </a>
         </div>
     </div>
-    <div class="absolute bottom-10 left-0 right-0 text-center">
-        <a href="#destinations" class="animate-bounce inline-block text-white">
+    
+    <div class="absolute bottom-10 left-0 right-0 text-center animate-bounce">
+        <a href="#destinations" class="inline-block text-white">
             <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
             </svg>
@@ -35,67 +37,79 @@
     </div>
 </section>
 
-<!-- Top Destinations -->
-<section id="destinations" class="py-20 bg-gray-50">
+<!-- Enhanced Destinations Section -->
+<section id="destinations" class="py-20 bg-gradient-to-b from-gray-50 to-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-4xl font-extrabold text-gray-900 sm:text-5xl">
-                <span class="block">Explore Our <span class="text-blue-600">Top Destinations</span></span>
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
+                <span class="block">Explore Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-600">Top Destinations</span></span>
             </h2>
-            <div class="mt-3 h-1 w-24 bg-yellow-400 mx-auto"></div>
+            <div class="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-500 mx-auto rounded-full"></div>
             <p class="mt-6 max-w-3xl mx-auto text-gray-600 text-xl">
                 Discover must-visit spots that showcase the breathtaking beauty and rich heritage of East Nusa Tenggara.
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($destinations as $destination)
-                <div class="island-card rounded-2xl overflow-hidden shadow-xl bg-white transition duration-500 ease-in-out transform hover:-translate-y-2 hover:shadow-2xl relative">
+                <div class="group relative overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
                     <div class="relative h-72 overflow-hidden">
                         <img src="{{ $destination->image ? asset('storage/destinations/' . preg_replace('#^/?destinations/|^/|/#', '', $destination->image)) : asset('images/fallback.jpg') }}"
                              alt="{{ $destination->name }}"
-                             class="w-full h-full object-cover transition duration-500 hover:scale-110"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                              loading="lazy">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                        
                         <div class="absolute bottom-0 left-0 p-6 text-white z-20">
                             <h3 class="text-2xl font-bold">{{ $destination->name }}</h3>
-                            <p class="text-sm opacity-90">{{ $destination->location }}</p>
+                            <p class="text-sm opacity-90 flex items-center">
+                                <i class="fas fa-map-marker-alt mr-2"></i> {{ $destination->location }}
+                            </p>
                         </div>
-                        <span class="absolute top-4 right-4 bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-full shadow z-20">
+                        
+                        <span class="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg z-20">
                             {{ $destination->category }}
                         </span>
-                        <div class="absolute inset-0 island-overlay flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity duration-300 z-30">
-                            <a href="#" class="bg-white text-blue-600 px-6 py-3 rounded-full font-bold hover:bg-blue-600 hover:text-white transition">
-                                Explore Now
+                        
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
+                            <a href="#" class="bg-white text-blue-600 px-6 py-3 rounded-full font-bold hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105">
+                                Explore Now <i class="fas fa-arrow-right ml-2"></i>
                             </a>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <p class="text-gray-600 text-base leading-relaxed">
+                    
+                    <div class="bg-white p-6">
+                        <p class="text-gray-600 mb-4 leading-relaxed">
                             {{ \Illuminate\Support\Str::limit($destination->description, 120) }}
                         </p>
-                        <div class="mt-6 flex justify-between items-center">
-                            <div class="flex items-center text-yellow-400">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
+                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                            <div class="flex items-center">
+                                <div class="flex text-yellow-400">
+                                    @for($i = 0; $i < 5; $i++)
+                                        <i class="fas fa-star{{ $i < 4 ? '' : '-half-alt' }}"></i>
+                                    @endfor
+                                </div>
                                 <span class="text-gray-500 ml-2 text-sm">4.7 (1.2k)</span>
                             </div>
-                            <span class="text-blue-600 font-bold text-sm">IDR 500K</span>
+                            <span class="text-blue-600 font-bold">IDR 500K</span>
                         </div>
                     </div>
                 </div>
             @empty
-                <p class="text-center text-gray-600 col-span-3 text-lg">
-                    No popular destinations available at the moment.
-                </p>
+                <div class="col-span-3 text-center py-12">
+                    <div class="inline-block p-6 bg-white rounded-xl shadow-lg">
+                        <i class="fas fa-map-marked-alt text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600 text-lg">
+                            No popular destinations available at the moment.
+                        </p>
+                    </div>
+                </div>
             @endforelse
         </div>
+        
         <div class="mt-16 text-center">
             <a href="{{ route('destinations.index') }}"
-               class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-semibold rounded-full shadow-lg text-white bg-blue-600 hover:bg-blue-700 transition duration-300 transform hover:scale-105">
+               class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-lg font-semibold">
                 View All Destinations
                 <svg class="ml-3 w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -105,196 +119,220 @@
     </div>
 </section>
 
-<!-- Hotel Recommendations -->
-<section id="hotels" class="py-20 bg-white">
+<!-- Luxury Stays Carousel -->
+<section id="luxury-stays" class="py-20 bg-gradient-to-b from-white to-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <!-- Section Heading -->
-        <div class="text-center mb-16">
-            <h2 class="text-4xl font-extrabold text-gray-900 sm:text-5xl">
-                <span class="block">
-                    Top <span class="text-blue-600">Hotel Picks</span>
-                </span>
-            </h2>
-            <div class="mt-3 h-1 w-24 bg-yellow-400 mx-auto"></div>
-            <p class="mt-6 max-w-3xl mx-auto text-gray-600 text-xl">
-                Enjoy comfort, elegance, and unforgettable views in East Nusa Tenggara's finest hotels.
-            </p>
+        <!-- Section Header -->
+        <div class="mb-16">
+            <div class="flex flex-col gap-6 text-center">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">
+                    Luxury <span class="text-blue-600">Stays & Retreats</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-md mx-auto">
+                    Experience unparalleled comfort in East Nusa Tenggara's most exquisite accommodations
+                </p>
+            </div>
+            <div class="w-24 h-1 bg-yellow-400 mx-auto rounded-full mt-6"></div>
         </div>
+    </div>
 
-        <!-- Swiper Slider -->
-        <div class="relative">
-            <div class="swiper myHotelSwiper">
-                <div class="swiper-wrapper">
+        <!-- Swiper Container -->
+        <div class="relative px-12">
+            <div class="swiper luxuryHotelSwiper">
+                <div class="swiper-wrapper pb-12">
                     @forelse($hotels as $hotel)
-                        <div class="swiper-slide h-full">
-                            <div class="bg-white h-full rounded-3xl shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-[1.02] flex flex-col justify-between group">
+                    <div class="swiper-slide h-full">
+                        <div class="bg-white h-full rounded-3xl shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-[1.02] flex flex-col justify-between group">
+                            <!-- Hotel Image -->
+                            <div class="relative overflow-hidden">
+                                <img src="{{ $hotel->image ? asset('storage/' . $hotel->image) : asset('images/hotel-fallback.jpg') }}"
+                                     alt="{{ $hotel->name }}"
+                                     class="w-full h-56 object-cover group-hover:scale-110 transition duration-500 ease-in-out"
+                                     loading="lazy">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                                <!-- Premium Badge -->
+                                <div class="absolute top-4 left-4 bg-yellow-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center">
+                                    <i class="fas fa-crown mr-1"></i> PREMIUM
+                                </div>
+                            </div>
 
-                                <!-- Hotel Image -->
-                                <div class="relative overflow-hidden">
-                                    <img 
-                                        src="{{ $hotel->image ? asset('storage/' . $hotel->image) : asset('images/hotel-fallback.jpg') }}"
-                                        alt="{{ $hotel->name }}"
-                                        class="w-full h-56 object-cover group-hover:scale-110 transition duration-500 ease-in-out"
-                                        loading="lazy"
-                                    >
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                            <!-- Hotel Details -->
+                            <div class="p-6 flex flex-col justify-between flex-1">
+                                <h3 class="text-xl font-bold text-gray-800 truncate">{{ $hotel->name }}</h3>
+                                
+                                <!-- Star Rating -->
+                                <div class="flex items-center text-yellow-500 text-sm mt-1">
+                                    @for($i = 0; $i < 5; $i++)
+                                        <i class="fas fa-star {{ $i < 4 ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                    @endfor
+                                    <span class="ml-2 text-gray-500">({{ rand(150, 500) }} reviews)</span>
                                 </div>
 
-                                <!-- Hotel Details -->
-                                <div class="p-6 flex flex-col justify-between flex-1">
-                                    <h3 class="text-xl font-bold text-gray-800 truncate">{{ $hotel->name }}</h3>
-                                    
-                                    <!-- Star Rating -->
-                                    <div class="flex items-center text-yellow-500 text-sm mt-1">
-                                        @for($i = 0; $i < 5; $i++)
-                                            <i class="fas fa-star {{ $i < 4 ? 'text-yellow-400' : 'text-gray-300' }}"></i>
-                                        @endfor
-                                        <span class="ml-2 text-gray-500">({{ rand(150, 500) }} reviews)</span>
-                                    </div>
+                                <!-- Location -->
+                                <p class="text-gray-500 text-sm mt-2 flex items-center">
+                                    <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>
+                                    {{ $hotel->location ?? 'East Nusa Tenggara' }}
+                                </p>
 
-                                    <!-- Price -->
-                                    <div class="mt-3 text-blue-600 text-lg font-semibold">
-                                        IDR {{ number_format($hotel->single_room_price, 0, ',', '.') }}
-                                        <span class="text-sm font-normal text-gray-500">/night</span>
-                                    </div>
-
-                                    <!-- Facilities -->
-                                    @php
-                                        $facilities = is_array($hotel->facilities) ? $hotel->facilities : explode(',', $hotel->facilities);
-                                    @endphp
-                                    @if(!empty($facilities))
-                                        <div class="flex flex-wrap gap-2 mt-4 text-sm">
-                                            @foreach($facilities as $facility)
-                                                @php $f = strtolower(trim($facility)); @endphp
-                                                <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
-                                                    @if(str_contains($f, 'wifi'))
-                                                        <i class="fas fa-wifi"></i>
-                                                    @elseif(str_contains($f, 'pool'))
-                                                        <i class="fas fa-swimming-pool"></i>
-                                                    @elseif(str_contains($f, 'dining') || str_contains($f, 'restaurant'))
-                                                        <i class="fas fa-utensils"></i>
-                                                    @elseif(str_contains($f, 'parking'))
-                                                        <i class="fas fa-parking"></i>
-                                                    @elseif(str_contains($f, 'ac') || str_contains($f, 'air'))
-                                                        <i class="fas fa-wind"></i>
-                                                    @elseif(str_contains($f, 'bar'))
-                                                        <i class="fas fa-glass-martini-alt"></i>
-                                                    @elseif(str_contains($f, 'spa'))
-                                                        <i class="fas fa-spa"></i>
-                                                    @elseif(str_contains($f, 'yoga'))
-                                                        <i class="fas fa-child"></i>
-                                                    @elseif(str_contains($f, 'butler'))
-                                                        <i class="fas fa-user-tie"></i>
-                                                    @elseif(str_contains($f, 'diving'))
-                                                        <i class="fas fa-water"></i>
-                                                    @elseif(str_contains($f, 'meeting'))
-                                                        <i class="fas fa-chalkboard"></i>
-                                                    @else
-                                                        <i class="fas fa-check-circle text-gray-400"></i>
-                                                    @endif
-                                                    {{ ucwords(trim($facility)) }}
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endif
-
-                                    <!-- Action Buttons -->
-                                    <div class="mt-6 flex gap-2">
-                                        <a href="#" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium shadow">
-                                            View Details
-                                        </a>
-                                        <a href="{{ route('hotels.book', ['hotel' => $hotel->id]) }}" class="flex-1 text-center bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 transition font-semibold">
-                                            Book Now
-                                        </a>
-                                    </div>
+                                <!-- Price -->
+                                <div class="mt-3 text-blue-600 text-lg font-semibold">
+                                    IDR {{ number_format($hotel->single_room_price, 0, ',', '.') }}
+                                    <span class="text-sm font-normal text-gray-500">/night</span>
                                 </div>
 
+                                <!-- Facilities -->
+                                @php
+                                    $facilities = is_array($hotel->facilities) ? $hotel->facilities : explode(',', $hotel->facilities);
+                                    $highlightedFacilities = array_slice($facilities, 0, 3);
+                                @endphp
+                                @if(!empty($facilities))
+                                    <div class="flex flex-wrap gap-2 mt-4 text-sm">
+                                        @foreach($highlightedFacilities as $facility)
+                                            @php $f = strtolower(trim($facility)); @endphp
+                                            <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+                                                @if(str_contains($f, 'wifi'))
+                                                    <i class="fas fa-wifi"></i>
+                                                @elseif(str_contains($f, 'pool'))
+                                                    <i class="fas fa-swimming-pool"></i>
+                                                @elseif(str_contains($f, 'spa'))
+                                                    <i class="fas fa-spa"></i>
+                                                @else
+                                                    <i class="fas fa-check-circle text-gray-400"></i>
+                                                @endif
+                                                {{ ucwords(trim($facility)) }}
+                                            </div>
+                                        @endforeach
+                                        @if(count($facilities) > 3)
+                                            <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-gray-600 border border-gray-200">
+                                                +{{ count($facilities) - 3 }} more
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+
+                                <!-- Action Buttons -->
+                                <div class="mt-6 flex gap-2">
+                                    <a href="{{ route('hotels.show', $hotel->id) }}" 
+                                       class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium shadow">
+                                        View Details
+                                    </a>
+                                    <a href="{{ route('hotels.book', $hotel->id) }}" 
+                                       class="flex-1 text-center bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 transition font-semibold">
+                                        Book Now
+                                    </a>
+                                </div>
                             </div>
                         </div>
+                    </div>
                     @empty
-                        <div class="swiper-slide text-center text-gray-600 text-lg py-10">
-                            No hotels available at the moment.
-                        </div>
+                    <div class="swiper-slide text-center text-gray-600 text-lg py-10">
+                        No hotels available at the moment.
+                    </div>
                     @endforelse
                 </div>
-
-                <!-- Swiper Navigation -->
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-pagination mt-4"></div>
+                
+                <!-- Custom Pagination -->
+                <div class="swiper-pagination !relative !mt-10"></div>
+            </div>
+            
+            <!-- Custom Navigation Buttons -->
+            <div class="swiper-button-prev luxury-hotel-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-50 transition">
+                <i class="fas fa-chevron-left text-blue-600"></i>
+            </div>
+            <div class="swiper-button-next luxury-hotel-next absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-50 transition">
+                <i class="fas fa-chevron-right text-blue-600"></i>
             </div>
         </div>
-
+        
         <!-- View All Button -->
         <div class="mt-16 text-center">
             <a href="{{ route('hotels.index') }}" class="inline-flex items-center px-8 py-4 text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg text-lg font-semibold">
                 View All Hotels
                 <svg class="ml-3 w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                 </svg>
             </a>
         </div>
-
     </div>
 </section>
 
-
-<!-- Tour Packages -->
-<section id="tour-packages" class="py-20 bg-gray-50">
+<!-- Enhanced Tour Packages Section -->
+<section id="tour-packages" class="py-20 bg-gradient-to-b from-gray-50 to-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-4xl font-extrabold text-gray-900 sm:text-5xl">
-                <span class="block">Curated <span class="text-blue-600">Tour Packages</span></span>
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
+                <span class="block">Curated <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-600">Tour Packages</span></span>
             </h2>
-            <div class="mt-3 h-1 w-24 bg-yellow-400 mx-auto"></div>
+            <div class="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-500 mx-auto rounded-full"></div>
             <p class="mt-6 max-w-3xl mx-auto text-gray-600 text-xl">
                 Handpicked tour packages to explore the stunning beauty of East Nusa Tenggara.
             </p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            @forelse ($TourPackage  as $paket)
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform transition duration-300 hover:scale-105">
-                    <img src="{{ $paket->thumbnail ? asset('storage/' . $paket->thumbnail) : asset('images/tour-fallback.jpg') }}"
-                         class="w-full h-56 object-cover" alt="{{ $paket->name }}" loading="lazy">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @forelse($TourPackage as $paket)
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl group">
+                    <div class="relative h-56 overflow-hidden">
+                        <img src="{{ $paket->thumbnail ? asset('storage/' . $paket->thumbnail) : asset('images/tour-fallback.jpg') }}"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                             alt="{{ $paket->name }}"
+                             loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        <div class="absolute top-4 right-4 bg-white/90 text-blue-600 text-xs font-bold px-3 py-1 rounded-full shadow">
+                            {{ ucfirst($paket->category) }}
+                        </div>
+                    </div>
+                    
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800">{{ $paket->name }}</h3>
-                        <p class="text-sm text-gray-500 mt-2">📍 {{ $paket->location }}</p>
-                        <div class="flex items-center justify-between mt-4">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $paket->name }}</h3>
+                        <p class="text-sm text-gray-500 mb-3 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i> {{ $paket->location }}
+                        </p>
+                        
+                        <div class="flex justify-between items-center mb-4">
                             <span class="text-blue-600 font-bold text-lg">
                                 IDR {{ number_format($paket->price, 0, ',', '.') }}
                             </span>
-                            <span class="text-sm text-gray-600">
+                            <span class="text-sm bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
                                 {{ $paket->days ?? '3' }} Days
                             </span>
                         </div>
-                        <p class="text-sm text-gray-600 mt-3">
-                            Category: <span class="text-gray-800 font-medium">{{ ucfirst($paket->category) }}</span><br>
-                            Hotel Included: 
-                            @php
-                                $hasHotel = $paket->variants->contains(fn($v) => $v->includes_hotel);
-                            @endphp
-                            <span class="font-medium {{ $hasHotel ? 'text-green-600' : 'text-red-600' }}">
-                                {{ $hasHotel ? 'Yes' : 'No' }}
+                        
+                        @php
+                            $hasHotel = $paket->variants->contains(fn($v) => $v->includes_hotel);
+                        @endphp
+                        
+                        <div class="flex items-center justify-between text-sm mb-5">
+                            <span class="{{ $hasHotel ? 'text-green-600' : 'text-red-600' }}">
+                                <i class="fas {{ $hasHotel ? 'fa-check-circle' : 'fa-times-circle' }} mr-1"></i>
+                                Hotel {{ $hasHotel ? 'Included' : 'Not Included' }}
                             </span>
-                        </p>
-                        <div class="mt-6">
-                            <a href="{{ route('paket-tours.show', $paket->id) }}"
-                               class="block text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition duration-300">
-                                View Details
-                            </a>
+                            <span class="text-gray-500">
+                                <i class="fas fa-users mr-1"></i> Max {{ $paket->max_participants ?? 10 }} people
+                            </span>
                         </div>
+                        
+                        <a href="{{ route('paket-tours.show', $paket->id) }}"
+                           class="block w-full text-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-[1.02]">
+                            View Details <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
                     </div>
                 </div>
             @empty
-                <p class="text-center text-gray-600 col-span-3 text-lg">
-                    No tour packages available at the moment.
-                </p>
+                <div class="col-span-3 text-center py-12">
+                    <div class="inline-block p-6 bg-white rounded-xl shadow-lg">
+                        <i class="fas fa-suitcase-rolling text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600 text-lg">
+                            No tour packages available at the moment.
+                        </p>
+                    </div>
+                </div>
             @endforelse
         </div>
+        
         <div class="mt-16 text-center">
             <a href="{{ route('paket-tours.index') }}"
-               class="inline-flex items-center px-8 py-4 text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg text-lg font-semibold">
+               class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-lg font-semibold">
                 Explore All Tour Packages
                 <svg class="ml-3 w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -304,14 +342,14 @@
     </div>
 </section>
 
-<!-- Culture Section -->
-<section id="culture" class="py-20 bg-white">
+<!-- Enhanced Culture Section -->
+<section id="culture" class="py-20 bg-gradient-to-b from-white to-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16 animate__animated animate__fadeInUp">
-            <h2 class="text-4xl font-extrabold text-gray-900 sm:text-5xl">
-                <span class="block">Immerse in <span class="text-blue-600">NTT Culture</span></span>
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
+                <span class="block">Immerse in <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-600">NTT Culture</span></span>
             </h2>
-            <div class="mt-3 h-1 w-24 bg-yellow-400 mx-auto"></div>
+            <div class="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-500 mx-auto rounded-full"></div>
             <p class="mt-6 max-w-3xl mx-auto text-gray-600 text-xl">
                 Discover the rich traditions, unique customs, and vibrant festivals of East Nusa Tenggara.
             </p>
@@ -319,159 +357,269 @@
 
         @php
             $tagStyles = [
-                ['bg' => 'from-yellow-100 to-yellow-300', 'text' => 'text-yellow-900', 'icon' => 'fa-sun'],
-                ['bg' => 'from-blue-100 to-blue-300', 'text' => 'text-blue-900', 'icon' => 'fa-water'],
-                ['bg' => 'from-green-100 to-green-300', 'text' => 'text-green-900', 'icon' => 'fa-leaf'],
-                ['bg' => 'from-pink-100 to-pink-300', 'text' => 'text-pink-900', 'icon' => 'fa-heart'],
-                ['bg' => 'from-purple-100 to-purple-300', 'text' => 'text-purple-900', 'icon' => 'fa-masks-theater'],
-                ['bg' => 'from-red-100 to-red-300', 'text' => 'text-red-900', 'icon' => 'fa-fire'],
-                ['bg' => 'from-teal-100 to-teal-300', 'text' => 'text-teal-900', 'icon' => 'fa-fish'],
-                ['bg' => 'from-orange-100 to-orange-300', 'text' => 'text-orange-900', 'icon' => 'fa-mountain'],
-                ['bg' => 'from-indigo-100 to-indigo-300', 'text' => 'text-indigo-900', 'icon' => 'fa-drum'],
-                ['bg' => 'from-rose-100 to-rose-300', 'text' => 'text-rose-900', 'icon' => 'fa-star'],
+                ['bg' => 'bg-gradient-to-r from-yellow-100 to-yellow-200', 'text' => 'text-yellow-800', 'icon' => 'fa-sun'],
+                ['bg' => 'bg-gradient-to-r from-blue-100 to-blue-200', 'text' => 'text-blue-800', 'icon' => 'fa-water'],
+                ['bg' => 'bg-gradient-to-r from-green-100 to-green-200', 'text' => 'text-green-800', 'icon' => 'fa-leaf'],
+                ['bg' => 'bg-gradient-to-r from-pink-100 to-pink-200', 'text' => 'text-pink-800', 'icon' => 'fa-heart'],
+                ['bg' => 'bg-gradient-to-r from-purple-100 to-purple-200', 'text' => 'text-purple-800', 'icon' => 'fa-masks-theater'],
             ];
         @endphp
 
         @foreach($cultures as $index => $culture)
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mb-20 scroll-animate" data-animate-in="fadeInUp" data-animate-out="fadeOutDown">
-        <div class="{{ $index % 2 === 0 ? 'order-2 md:order-1' : 'order-2 md:order-2' }}">
-            <h3 class="text-3xl font-bold text-gray-800 mb-6">{{ $culture->title }}</h3>
-            <p class="text-gray-600 mb-6 leading-relaxed">{{ $culture->description_1 }}</p>
-            @if($culture->description_2)
-                <p class="text-gray-600 mb-6 leading-relaxed">{{ $culture->description_2 }}</p>
-            @endif
-            @if($culture->tags)
-                <div class="flex flex-wrap gap-3">
-                    @foreach($culture->tags as $tagIndex => $tag)
-                        @php $style = $tagStyles[$tagIndex % count($tagStyles)]; @endphp
-                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold {{ $style['text'] }} bg-gradient-to-r {{ $style['bg'] }} shadow-md hover:shadow-xl hover:scale-105 transition duration-300">
-                            <i class="fas {{ $style['icon'] }}"></i>
-                            {{ $tag }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mb-20 scroll-animate" 
+                 data-animate-in="fadeInUp" 
+                 data-animate-out="fadeOutDown"
+                 data-delay="{{ $index * 0.1 }}s">
+                
+                <div class="{{ $index % 2 === 0 ? 'order-2 md:order-1' : 'order-2 md:order-2' }}">
+                    <h3 class="text-3xl font-bold text-gray-800 mb-6">{{ $culture->title }}</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">{{ $culture->description_1 }}</p>
+                    
+                    @if($culture->description_2)
+                        <p class="text-gray-600 mb-6 leading-relaxed">{{ $culture->description_2 }}</p>
+                    @endif
+                    
+                    @if($culture->tags)
+                        <div class="flex flex-wrap gap-3">
+                            @foreach($culture->tags as $tagIndex => $tag)
+                                @php $style = $tagStyles[$tagIndex % count($tagStyles)]; @endphp
+                                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold {{ $style['text'] }} {{ $style['bg'] }} shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                    <i class="fas {{ $style['icon'] }}"></i>
+                                    {{ $tag }}
+                                </div>
+                            @endforeach
                         </div>
-                    @endforeach
+                    @endif
                 </div>
-            @endif
-        </div>
 
-        <div class="{{ $index % 2 === 0 ? 'order-1 md:order-2' : 'order-1 md:order-1' }} relative">
-            <img src="{{ asset('storage/' . $culture->image) }}" alt="{{ $culture->title }}" class="w-full rounded-2xl shadow-xl floating">
-            <div class="absolute -bottom-6 {{ $index % 2 === 0 ? '-left-6 bg-yellow-400' : '-right-6 bg-blue-400' }} w-24 h-24 rounded-full z-0"></div>
-        </div>
-    </div>
-@endforeach
+                <div class="{{ $index % 2 === 0 ? 'order-1 md:order-2' : 'order-1 md:order-1' }} relative">
+                    <div class="relative overflow-hidden rounded-2xl shadow-xl floating">
+                        <img src="{{ asset('storage/' . $culture->image) }}" 
+                             alt="{{ $culture->title }}" 
+                             class="w-full h-auto object-cover transition-transform duration-700 hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-black/10 to-transparent"></div>
+                    </div>
+                    <div class="absolute -bottom-4 {{ $index % 2 === 0 ? '-left-4' : '-right-4' }} w-20 h-20 rounded-full bg-gradient-to-r {{ $index % 2 === 0 ? 'from-yellow-400 to-yellow-500' : 'from-blue-400 to-blue-500' }} z-0"></div>
+                </div>
+            </div>
+        @endforeach
 
         <div class="mt-16 text-center animate__animated animate__fadeInUp">
-            <a href="{{ route('cultures.index') }}" class="inline-flex items-center px-8 py-4 text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg text-lg font-semibold">
+            <a href="{{ route('cultures.index') }}" 
+               class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-lg font-semibold">
                 Discover More Cultural Experiences
                 <svg class="ml-3 w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
                 </svg>
             </a>
         </div>
     </div>
 </section>
 
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <style>
-        .animate__hidden {
-            opacity: 0;
-        }
+<!-- Newsletter Section -->
+<section class="py-16 bg-gradient-to-r from-blue-600 to-teal-600 text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Stay Updated</h2>
+        <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Subscribe to our newsletter for the latest travel deals and updates from East Nusa Tenggara.
+        </p>
+        
+        <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <input type="email" placeholder="Your email address" 
+                   class="flex-grow px-5 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            <button type="submit" 
+                    class="px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-900 font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg">
+                Subscribe
+            </button>
+        </form>
+    </div>
+</section>
 
-        .floating {
-            animation: float 3s ease-in-out infinite;
-        }
+<!-- Testimonials Section -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
+                <span class="block">Traveler <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-600">Testimonials</span></span>
+            </h2>
+            <div class="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-500 mx-auto rounded-full"></div>
+            <p class="mt-6 max-w-3xl mx-auto text-gray-600 text-xl">
+                Hear what our visitors say about their experiences in East Nusa Tenggara.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            @foreach([1, 2, 3] as $testimonial)
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400 mr-2">
+                            @for($i = 0; $i < 5; $i++)
+                                <i class="fas fa-star"></i>
+                            @endfor
+                        </div>
+                        <span class="text-gray-500 text-sm">5.0</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 italic">
+                        "The cultural experiences in East Nusa Tenggara were unforgettable. The local guides were knowledgeable and the landscapes were breathtaking."
+                    </p>
+                    <div class="flex items-center">
+                        <img src="https://randomuser.me/api/portraits/{{ $testimonial % 2 ? 'men' : 'women' }}/{{ $testimonial }}2.jpg" 
+                             alt="Traveler" 
+                             class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <h4 class="font-bold text-gray-800">{{ $testimonial % 2 ? 'John' : 'Sarah' }} {{ $testimonial == 2 ? 'W.' : 'D.' }}</h4>
+                            <p class="text-sm text-gray-500">From Australia</p>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
 
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-    </style>
+<!-- Dependencies -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
+<!-- Additional Styles -->
+<style>
+    .floating {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .scroll-animate {
+        opacity: 0;
+        transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    
+    .scroll-animate.animate__animated {
+        opacity: 1;
+    }
+    
+    /* Custom Swiper Styles for Luxury Hotel */
+    .luxuryHotelSwiper .swiper-pagination-bullet {
+        width: 10px;
+        height: 10px;
+        background: #E5E7EB;
+        opacity: 1;
+        transition: all 0.3s ease;
+    }
+    
+    .luxuryHotelSwiper .swiper-pagination-bullet-active {
+        background: #1E40AF;
+        width: 30px;
+        border-radius: 5px;
+    }
+    
+    .luxury-hotel-prev, .luxury-hotel-next {
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.3s ease;
+    }
+    
+    #luxury-stays:hover .luxury-hotel-prev,
+    #luxury-stays:hover .luxury-hotel-next {
+        opacity: 1;
+        transform: scale(1);
+    }
+    
+    .luxury-hotel-prev:hover, .luxury-hotel-next:hover {
+        background: #EFF6FF !important;
+    }
+</style>
 
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Swiper Initialization for Hotels
-        new Swiper('.myHotelSwiper', {
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Luxury Hotel Swiper
+        const luxuryHotelSwiper = new Swiper('.luxuryHotelSwiper', {
             slidesPerView: 1,
-            spaceBetween: 24,
+            spaceBetween: 30,
             loop: true,
             autoplay: {
-                delay: 4000,
-                disableOnInteraction: false,
+                delay: 5000,
+                disableOnInteraction: true,
             },
             navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
+                nextEl: '.luxury-hotel-next',
+                prevEl: '.luxury-hotel-prev',
             },
             pagination: {
-                el: '.swiper-pagination',
+                el: '.luxuryHotelSwiper .swiper-pagination',
                 clickable: true,
+                dynamicBullets: true,
             },
             breakpoints: {
-                640: { slidesPerView: 1 },
-                768: { slidesPerView: 2 },
-                1024: { slidesPerView: 3 },
+                640: {
+                    slidesPerView: 1,
+                    spaceBetween: 20
+                },
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 25
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30
+                },
             }
         });
 
-        // Smooth Scroll
+        // Pause autoplay when hovering
+        const swiperContainer = document.querySelector('.luxuryHotelSwiper');
+        swiperContainer.addEventListener('mouseenter', () => {
+            luxuryHotelSwiper.autoplay.stop();
+        });
+        swiperContainer.addEventListener('mouseleave', () => {
+            luxuryHotelSwiper.autoplay.start();
+        });
+
+        // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({ behavior: 'smooth' });
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
                 }
             });
         });
 
-        // Scroll Animation for Culture Section (Fade In & Out without flicker)
+        // Scroll animation observer
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                const el = entry.target;
-                const animateIn = el.getAttribute('data-animate-in') || 'fadeInUp';
-                const animateOut = el.getAttribute('data-animate-out') || 'fadeOutDown';
-                const delay = el.getAttribute('data-delay') || '0s';
-
-                // Hindari penggantian class selama animasi aktif
-                if (el.classList.contains('is-animating')) return;
-
                 if (entry.isIntersecting) {
-                    el.classList.remove('animate__hidden', `animate__${animateOut}`);
-                    el.classList.add('animate__animated', `animate__${animateIn}`, 'is-animating');
-                    el.style.animationDelay = delay;
-
-                    el.addEventListener('animationend', () => {
-                        el.classList.remove('is-animating', `animate__${animateIn}`);
-                    }, { once: true });
-                } else {
-                    el.classList.remove(`animate__${animateIn}`);
-                    el.classList.add('animate__animated', `animate__${animateOut}`, 'is-animating');
-                    el.style.animationDelay = '0s';
-
-                    el.addEventListener('animationend', () => {
-                        el.classList.remove('is-animating', `animate__${animateOut}`);
-                        el.classList.add('animate__hidden');
-                    }, { once: true });
+                    const animateIn = entry.target.getAttribute('data-animate-in');
+                    const delay = entry.target.getAttribute('data-delay') || '0s';
+                    
+                    entry.target.style.animationDelay = delay;
+                    entry.target.classList.add('animate__animated', animateIn);
+                    
+                    // Remove the animation class after it completes to avoid repetition
+                    const handleAnimationEnd = () => {
+                        entry.target.classList.remove('animate__animated', animateIn);
+                        entry.target.removeEventListener('animationend', handleAnimationEnd);
+                    };
+                    
+                    entry.target.addEventListener('animationend', handleAnimationEnd);
                 }
             });
         }, {
             threshold: 0.1,
-            rootMargin: '0px 0px -10% 0px'
+            rootMargin: '0px 0px -50px 0px'
         });
 
-        // Only observe elements within #culture
-        document.querySelectorAll('#culture .scroll-animate').forEach(el => {
-            el.classList.add('animate__hidden'); // Hide initially
+        // Observe all elements with scroll-animate class
+        document.querySelectorAll('.scroll-animate').forEach(el => {
             observer.observe(el);
         });
     });

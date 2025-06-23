@@ -1,49 +1,63 @@
+
 @extends('layouts.app')
 
 @section('title', 'Booking Hotel - ' . $hotel->name)
 
 @section('content')
-<section class="py-16 bg-gray-100">
-    <div class="container mx-auto px-4 max-w-5xl space-y-10">
+<section class="py-8 md:py-12 bg-gradient-to-b from-blue-50 to-white">
+    <div class="container mx-auto px-4 max-w-6xl space-y-8">
         {{-- Hotel Overview --}}
-        <div class="bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
             <div class="md:flex">
-                <div class="md:w-1/2">
+                <div class="md:w-1/2 relative">
                     <img src="{{ $hotel->image ? asset('storage/' . $hotel->image) : asset('images/hotel-fallback.jpg') }}"
                          alt="{{ $hotel->name }}"
-                         class="w-full h-80 object-cover rounded-t-lg md:rounded-l-lg transform hover:scale-105 transition-transform duration-300">
-                </div>
-                <div class="md:w-1/2 p-8 flex flex-col justify-between">
-                    <div>
-                        <h1 class="text-4xl font-bold text-gray-800">{{ $hotel->name }}</h1>
-                        <p class="text-gray-600 mt-4">{{ $hotel->description }}</p>
-                    </div>
-                    <div class="mt-6 space-y-2">
-                        <div class="text-blue-600 flex items-center space-x-2">
-                            <i class="fas fa-map-marker-alt"></i>
+                         class="w-full h-80 md:h-full object-cover rounded-t-lg md:rounded-l-lg md:rounded-tr-none transition-transform duration-500 hover:scale-105">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                        <h1 class="text-3xl md:text-4xl font-bold text-white">{{ $hotel->name }}</h1>
+                        <div class="flex items-center mt-2 text-white/90">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
                             <span>{{ $hotel->location }}</span>
                         </div>
-                        <div class="flex flex-wrap gap-2 mt-2">
-                            @php
-                                $facilities = is_array($hotel->facilities)
-                                    ? $hotel->facilities
-                                    : explode(',', $hotel->facilities);
-                            @endphp
-                            @foreach($facilities as $facility)
-                                @php $f = strtolower(trim($facility)); @endphp
-                                <div class="flex items-center gap-1 px-4 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-200">
-                                    @if(str_contains($f, 'wifi')) <i class="fas fa-wifi"></i>
-                                    @elseif(str_contains($f, 'pool')) <i class="fas fa-swimming-pool"></i>
-                                    @elseif(str_contains($f, 'restaurant')) <i class="fas fa-utensils"></i>
-                                    @elseif(str_contains($f, 'parking')) <i class="fas fa-parking"></i>
-                                    @elseif(str_contains($f, 'ac')) <i class="fas fa-wind"></i>
-                                    @elseif(str_contains($f, 'spa')) <i class="fas fa-spa"></i>
-                                    @elseif(str_contains($f, 'bar')) <i class="fas fa-glass-martini-alt"></i>
-                                    @else <i class="fas fa-check-circle text-gray-400"></i>
-                                    @endif
-                                    <span>{{ ucwords(trim($facility)) }}</span>
-                                </div>
-                            @endforeach
+                    </div>
+                </div>
+                <div class="md:w-1/2 p-6 md:p-8 flex flex-col">
+                    <div class="flex-grow">
+                        <div class="flex items-center mb-4">
+                            <div class="flex items-center text-yellow-400">
+                                @for($i = 0; $i < 5; $i++)
+                                    <i class="fas fa-star {{ $i < $hotel->stars ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                @endfor
+                            </div>
+                            <span class="ml-2 text-sm text-gray-500">{{ $hotel->stars }} stars</span>
+                        </div>
+                        
+                        <p class="text-gray-600 leading-relaxed">{{ $hotel->description }}</p>
+                        
+                        <div class="mt-6">
+                            <h3 class="font-semibold text-gray-700 mb-3">Facilities:</h3>
+                            <div class="flex flex-wrap gap-2">
+                                @php
+                                    $facilities = is_array($hotel->facilities)
+                                        ? $hotel->facilities
+                                        : explode(',', $hotel->facilities);
+                                @endphp
+                                @foreach($facilities as $facility)
+                                    @php $f = strtolower(trim($facility)); @endphp
+                                    <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100 text-sm">
+                                        @if(str_contains($f, 'wifi')) <i class="fas fa-wifi text-sm"></i>
+                                        @elseif(str_contains($f, 'pool')) <i class="fas fa-swimming-pool text-sm"></i>
+                                        @elseif(str_contains($f, 'restaurant')) <i class="fas fa-utensils text-sm"></i>
+                                        @elseif(str_contains($f, 'parking')) <i class="fas fa-parking text-sm"></i>
+                                        @elseif(str_contains($f, 'ac')) <i class="fas fa-wind text-sm"></i>
+                                        @elseif(str_contains($f, 'spa')) <i class="fas fa-spa text-sm"></i>
+                                        @elseif(str_contains($f, 'bar')) <i class="fas fa-glass-martini-alt text-sm"></i>
+                                        @else <i class="fas fa-check-circle text-gray-400 text-sm"></i>
+                                        @endif
+                                        <span>{{ ucwords(trim($facility)) }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -51,180 +65,417 @@
         </div>
 
         {{-- Booking Form --}}
-        <div class="bg-white shadow-lg rounded-2xl p-8">
-            <form id="bookingForm" method="POST" action="{{ route('booking.hotel.store') }}">
-                @csrf
-
-                {{-- Hidden Inputs --}}
-                <input type="hidden" name="hotel_id" value="{{ $hotel->id }}">
-                <input type="hidden" id="selectedRoomPrice" name="room_price" value="{{ $hotel->single_room_price ?? 0 }}">
-                <input type="hidden" id="discountAmount" name="discount_amount" value="0">
-                <input type="hidden" id="promoCodeId" name="promo_code_id" value="">
-                <input type="hidden" id="nightCount" name="night_count" value="1">
-                <input type="hidden" id="totalPrice" name="total_price" value="0">
-                <input type="hidden" id="tax" name="tax" value="0">
-                <input type="hidden" id="serviceCharge" name="service_charge" value="0">
-                <input type="hidden" name="status" value="pending">
-
-                {{-- Pass room prices to JavaScript --}}
-                <div id="roomPrices" 
-                     data-single="{{ $hotel->single_room_price ?? 0 }}"
-                     data-double="{{ $hotel->double_room_price ?? 0 }}"
-                     data-family="{{ $hotel->family_room_price ?? 0 }}"
-                     class="hidden"></div>
-
-                {{-- Display general form errors --}}
-                @if ($errors->any())
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="md:flex">
+                {{-- Booking Steps --}}
+                <div class="md:w-1/3 bg-blue-600 text-white p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-6">Booking Steps</h2>
+                    <ol id="bookingSteps" class="space-y-6">
+                        <!-- Step 1 -->
+                        <li class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+                                <span class="font-semibold">1</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Room Selection</h3>
+                                <p class="text-blue-100 text-sm mt-1">Choose your preferred room type</p>
+                            </div>
+                        </li>
+                        
+                        <!-- Step 2 -->
+                        <li class="flex items-start space-x-4 opacity-70">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-700 flex items-center justify-center">
+                                <span class="font-semibold">2</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Dates & Promo Cod </h3>
+                                <p class="text-blue-100 text-sm mt-1">Select dates and Promo Cod</p>
+                            </div>
+                        </li>
+                        
+                        <!-- Step 3 -->
+                        <li class="flex items-start space-x-4 opacity-70">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-700 flex items-center justify-center">
+                                <span class="font-semibold">3</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Guest Details</h3>
+                                <p class="text-blue-100 text-sm mt-1">Enter guest information</p>
+                            </div>
+                        </li>
+                        
+                        <!-- Step 4 -->
+                        <li class="flex items-start space-x-4 opacity-70">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-700 flex items-center justify-center">
+                                <span class="font-semibold">4</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Confirmation</h3>
+                                <p class="text-blue-100 text-sm mt-1">Review and complete booking</p>
+                            </div>
+                        </li>
+                    </ol>
+                    <div class="mt-8 pt-6 border-t border-blue-500">
+                        <h3 class="font-semibold mb-2">Need Help?</h3>
+                        <p class="text-blue-100 text-sm mb-3">Our customer service is available 24/7</p>
+                        <a href="tel:+1234567890" class="flex items-center text-blue-100 hover:text-white">
+                            <i class="fas fa-phone-alt mr-2"></i> +1 (234) 567-890
+                        </a>
+                        <a href="mailto:help@example.com" class="flex items-center text-blue-100 hover:text-white mt-2">
+                            <i class="fas fa-envelope mr-2"></i> help@example.com
+                        </a>
                     </div>
-                @endif
-                @if (session('error'))
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-                        {{ session('error') }}
-                    </div>
-                @endif
+                </div>
 
-                {{-- Room Selection --}}
-                <div class="mb-8">
-                    <h2 class="text-2xl font-semibold text-gray-700 mb-4 flex items-center">
-                        <i class="fas fa-bed text-blue-500 mr-3"></i> Choose Room Type
-                    </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        @php
-                            $rooms = [
-                                ['type' => 'single', 'name' => 'Single', 'price' => $hotel->single_room_price ?? 0, 'icon' => 'fas fa-user'],
-                                ['type' => 'double', 'name' => 'Double', 'price' => $hotel->double_room_price ?? 0, 'icon' => 'fas fa-users'],
-                                ['type' => 'family', 'name' => 'Family', 'price' => $hotel->family_room_price ?? 0, 'icon' => 'fas fa-home'],
-                            ];
-                        @endphp
-                        @foreach($rooms as $room)
-                            <label class="room-option border-2 rounded-xl p-6 cursor-pointer hover:shadow-md transition-transform duration-200 hover:scale-105 {{ old('room_type') == $room['type'] ? 'selected border-blue-500' : 'border-gray-200' }}"
-                                   data-type="{{ $room['type'] }}"
-                                   data-price="{{ $room['price'] }}">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-4">
-                                        <i class="{{ $room['icon'] }} text-3xl text-blue-500"></i>
-                                        <div>
-                                            <h3 class="font-semibold text-lg">{{ $room['name'] }} Room</h3>
-                                            <p class="text-gray-500">Rp{{ number_format($room['price'], 0, ',', '.') }} /night</p>
+                {{-- Form Content --}}
+                <div class="md:w-2/3 p-6 md:p-8">
+                    <form id="bookingForm" method="POST" action="{{ route('booking.hotel.store') }}">
+                        @csrf
+
+                        {{-- Hidden Inputs --}}
+                        <input type="hidden" name="hotel_id" value="{{ $hotel->id }}">
+                        <input type="hidden" id="selectedRoomPrice" name="room_price" value="{{ $hotel->single_room_price ?? 0 }}">
+                        <input type="hidden" id="discountAmount" name="discount_amount" value="0">
+                        <input type="hidden" id="promoCodeId" name="promo_code_id" value="">
+                        <input type="hidden" id="nightCount" name="night_count" value="1">
+                        <input type="hidden" id="totalPrice" name="total_price" value="0">
+                        <input type="hidden" id="tax" name="tax" value="0">
+                        <input type="hidden" id="serviceCharge" name="service_charge" value="0">
+                        <input type="hidden" name="status" value="pending">
+
+                        {{-- Pass room prices to JavaScript --}}
+                        <div id="roomPrices" 
+                             data-single="{{ $hotel->single_room_price ?? 0 }}"
+                             data-double="{{ $hotel->double_room_price ?? 0 }}"
+                             data-family="{{ $hotel->family_room_price ?? 0 }}"
+                             class="hidden"></div>
+
+                        {{-- Display general form errors --}}
+                        @if ($errors->any())
+                            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-medium text-red-800">There were {{ $errors->count() }} errors with your submission</h3>
+                                        <div class="mt-2 text-sm text-red-700">
+                                            <ul class="list-disc pl-5 space-y-1">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
                                         </div>
                                     </div>
-                                    <div class="icon-check {{ old('room_type') == $room['type'] ? '' : 'opacity-0' }} text-blue-600">
-                                        <i class="fas fa-check-circle text-2xl"></i>
+                                </div>
+                            </div>
+                        @endif
+                        @if (session('error'))
+                            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-red-700">{{ session('error') }}</p>
                                     </div>
                                 </div>
-                                <input type="radio" name="room_type" value="{{ $room['type'] }}" class="hidden" {{ old('room_type') == $room['type'] ? 'checked' : '' }} required>
-                            </label>
-                        @endforeach
-                        @error('room_type')
-                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
+                            </div>
+                        @endif
 
-                {{-- Dates --}}
-                <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block mb-2 font-semibold text-gray-600">Check-in</label>
-                        <input type="date" id="checkIn" name="check_in_date" value="{{ old('check_in_date') }}" class="w-full border rounded-lg p-3 focus:ring-blue-400 focus:border-blue-400" required>
-                        @error('check_in_date') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
-                        <label class="block mb-2 font-semibold text-gray-600">Check-out</label>
-                        <input type="date" id="checkOut" name="check_out_date" value="{{ old('check_out_date') }}" class="w-full border rounded-lg p-3 focus:ring-blue-400 focus:border-blue-400" required>
-                        @error('check_out_date') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
-                    </div>
-                </div>
-
-                {{-- Promo --}}
-                <div class="mb-8">
-                    <label class="block mb-2 font-semibold text-gray-600">Promo Code (optional)</label>
-                    <div class="flex items-center space-x-3">
-                        <input type="text" id="promoCode" name="promo_code" value="{{ old('promo_code') }}" class="flex-1 border rounded-lg p-3 focus:ring-blue-400 focus:border-blue-400" placeholder="e.g. TEMANRIAN1">
-                        <button type="button" id="applyPromo" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">Apply</button>
-                    </div>
-                    <div id="promoMessage" class="hidden text-sm mt-2"></div>
-                    @error('promo_code') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
-                    @error('promo_code_id') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
-                    @error('discount_amount') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
-                </div>
-
-                {{-- Summary --}}
-                <div class="bg-gray-50 p-6 rounded-xl shadow-inner mb-8">
-                    <h3 class="font-bold text-2xl text-gray-700 mb-4 flex items-center">
-                        <i class="fas fa-calculator text-blue-500 mr-3"></i> Price Summary
-                    </h3>
-                    <div class="space-y-3 text-gray-700">
-                        <div class="flex justify-between"><span>Room (× <span id="nightsDisplay">1</span> nights)</span><span id="summaryRoom">Rp0</span></div>
-                        <div class="flex justify-between"><span>Tax (10%)</span><span id="summaryTax">Rp0</span></div>
-                        <div class="flex justify-between"><span>Service Fee (5%)</span><span id="summaryFee">Rp0</span></div>
-                        <div class="flex justify-between text-green-600"><span>Discount</span><span id="summaryDiscount">Rp0</span></div>
-                        <hr class="my-3">
-                        <div class="flex justify-between font-bold text-xl"><span>Total</span><span id="summaryTotal" class="text-blue-600">Rp0</span></div>
-                    </div>
-                </div>
-
-                {{-- Guest & Payment --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                    <div class="space-y-4 bg-gray-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-semibold text-gray-700 flex items-center">
-                            <i class="fas fa-user-circle text-blue-500 mr-3"></i> Guest Information
-                        </h3>
-                        <div>
-                            <label class="block mb-1 font-medium">Full Name</label>
-                            <input type="text" name="customer_name" value="{{ old('customer_name') }}" class="w-full border rounded-lg p-3 focus:ring-blue-400 focus:border-blue-400" required>
-                            @error('customer_name') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
+                        {{-- Room Selection --}}
+                        <div class="mb-8">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-bed text-blue-500 mr-3"></i> Choose Your Room
+                            </h2>
+                            <p class="text-gray-500 mb-4">Select the room type that fits your needs</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                @php
+                                    $rooms = [
+                                        ['type' => 'single', 'name' => 'Single', 'price' => $hotel->single_room_price ?? 0, 'icon' => 'fas fa-user', 'desc' => 'Perfect for solo travelers'],
+                                        ['type' => 'double', 'name' => 'Double', 'price' => $hotel->double_room_price ?? 0, 'icon' => 'fas fa-users', 'desc' => 'Ideal for couples'],
+                                        ['type' => 'family', 'name' => 'Family', 'price' => $hotel->family_room_price ?? 0, 'icon' => 'fas fa-home', 'desc' => 'Great for families'],
+                                    ];
+                                @endphp
+                                @foreach($rooms as $room)
+                                    <label class="room-option border rounded-xl p-4 cursor-pointer transition-all duration-200 hover:border-blue-300 hover:shadow-md {{ old('room_type') == $room['type'] ? 'selected border-blue-500 bg-blue-50' : 'border-gray-200' }}"
+                                           data-type="{{ $room['type'] }}"
+                                           data-price="{{ $room['price'] }}">
+                                        <div class="flex flex-col h-full">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <div class="bg-blue-100 p-2 rounded-lg">
+                                                        <i class="{{ $room['icon'] }} text-blue-600"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h3 class="font-semibold">{{ $room['name'] }} Room</h3>
+                                                        <p class="text-sm text-gray-500">{{ $room['desc'] }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="icon-check {{ old('room_type') == $room['type'] ? 'text-blue-600' : 'text-blue-300' }}">
+                                                    <i class="fas fa-check-circle"></i>
+                                                </div>
+                                            </div>
+                                            <div class="mt-auto pt-3 border-t border-gray-100">
+                                                <p class="text-lg font-bold text-blue-600">Rp{{ number_format($room['price'], 0, ',', '.') }} <span class="text-sm font-normal text-gray-500">/night</span></p>
+                                            </div>
+                                        </div>
+                                        <input type="radio" name="room_type" value="{{ $room['type'] }}" class="hidden" {{ old('room_type') == $room['type'] ? 'checked' : '' }} required>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('room_type')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
-                        <div>
-                            <label class="block mb-1 font-medium">Email</label>
-                            <input type="email" name="customer_email" value="{{ old('customer_email') }}" class="w-full border rounded-lg p-3 focus:ring-blue-400 focus:border-blue-400" required>
-                            @error('customer_email') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
+
+                        {{-- Dates --}}
+                        <div class="mb-8">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-calendar-alt text-blue-500 mr-3"></i> Select Dates
+                            </h2>
+                            <p class="text-gray-500 mb-4">Choose your check-in and check-out dates</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Check-in Date</label>
+                                    <div class="relative">
+                                        <input type="date" id="checkIn" name="check_in_date" value="{{ old('check_in_date') }}" 
+                                               class="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:ring-blue-500 focus:border-blue-500" required>
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-calendar-day text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                    @error('check_in_date') 
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p> 
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Check-out Date</label>
+                                    <div class="relative">
+                                        <input type="date" id="checkOut" name="check_out_date" value="{{ old('check_out_date') }}" 
+                                               class="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:ring-blue-500 focus:border-blue-500" required>
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-calendar-day text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                    @error('check_out_date') 
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p> 
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block mb-1 font-medium">Phone</label>
-                            <input type="text" name="customer_phone" value="{{ old('customer_phone') }}" class="w-full border rounded-lg p-3 focus:ring-blue-400 focus:border-blue-400" required>
-                            @error('customer_phone') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
+
+                        {{-- Promo Code --}}
+                        <div class="mb-8">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-tag text-blue-500 mr-3"></i> Promo Code
+                            </h2>
+                            <p class="text-gray-500 mb-4">Have a discount code? Enter it here</p>
+                            
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <div class="flex-grow relative">
+                                    <input type="text" id="promoCode" name="promo_code" value="{{ old('promo_code') }}" 
+                                           class="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:ring-blue-500 focus:border-blue-500" 
+                                           placeholder="e.g. SUMMER2023">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-ticket-alt text-gray-400"></i>
+                                    </div>
+                                </div>
+                                <button type="button" id="applyPromo" 
+                                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium whitespace-nowrap">
+                                    Apply Code
+                                </button>
+                            </div>
+                            <div id="promoMessage" class="hidden mt-2 text-sm p-3 rounded-lg"></div>
+                            @error('promo_code') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                            @error('promo_code_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                            @error('discount_amount') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
-                    </div>
-                    <div class="space-y-4 bg-gray-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-semibold text-gray-700 flex items-center">
-                            <i class="fas fa-credit-card text-blue-500 mr-3"></i> Payment Method
-                        </h3>
-                        <div class="space-y-2">
-                            @foreach(['transfer', 'qris', 'cash'] as $method)
-                                <label class="flex items-center space-x-3">
-                                    <input type="radio" name="payment_method" value="{{ $method }}" {{ old('payment_method') == $method ? 'checked' : '' }} required class="h-5 w-5 text-blue-600 focus:ring-blue-400">
-                                    <span class="capitalize font-medium">{{ ucfirst($method) }}</span>
+
+                        {{-- Guest Information --}}
+                        <div class="mb-8">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-user-circle text-blue-500 mr-3"></i> Guest Information
+                            </h2>
+                            <p class="text-gray-500 mb-4">Enter your details for the reservation</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                    <div class="relative">
+                                        <input type="text" id="customerName" name="customer_name" value="{{ old('customer_name') }}" 
+                                               class="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:ring-blue-500 focus:border-blue-500" required>
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-user text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                    @error('customer_name') 
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p> 
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <div class="relative">
+                                        <input type="email" id="customerEmail" name="customer_email" value="{{ old('customer_email') }}" 
+                                               class="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:ring-blue-500 focus:border-blue-500" required>
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-envelope text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                    @error('customer_email') 
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p> 
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                    <div class="relative">
+                                        <input type="tel" id="customerPhone" name="customer_phone" value="{{ old('customer_phone') }}" 
+                                               class="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:ring-blue-500 focus:border-blue-500" required>
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-phone text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                    @error('customer_phone') 
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p> 
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Special Requests</label>
+                                    <div class="relative">
+                                        <input type="text" name="special_requests" value="{{ old('special_requests') }}" 
+                                               class="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:ring-blue-500 focus:border-blue-500" 
+                                               placeholder="Optional">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-comment-dots text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Payment Method --}}
+                        <div class="mb-8">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-credit-card text-blue-500 mr-3"></i> Payment Method
+                            </h2>
+                            <p class="text-gray-500 mb-4">Choose how you'd like to pay</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <label class="payment-method border rounded-lg p-4 cursor-pointer hover:border-blue-300 transition-colors duration-200 {{ old('payment_method') == 'transfer' ? 'border-blue-500 bg-blue-50' : 'border-gray-200' }}">
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="payment_method" value="transfer" {{ old('payment_method') == 'transfer' ? 'checked' : '' }} class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+                                        <div>
+                                            <h3 class="font-medium">Bank Transfer</h3>
+                                            <p class="text-sm text-gray-500">Pay via bank transfer</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex space-x-2">
+                                        <div class="p-1 bg-white rounded shadow-xs">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Former_Visa_%28company%29_logo.svg" class="h-6" alt="Visa">
+                                        </div>
+                                        <div class="p-1 bg-white rounded shadow-xs">
+                                            <img src="https://pngimg.com/d/mastercard_PNG16.png" class="h-6" alt="Mastercard">
+                                        </div>
+                                    </div>
                                 </label>
-                            @endforeach
-                            @error('payment_method') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
+                                <label class="payment-method border rounded-lg p-4 cursor-pointer hover:border-blue-300 transition-colors duration-200 {{ old('payment_method') == 'qris' ? 'border-blue-500 bg-blue-50' : 'border-gray-200' }}">
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="payment_method" value="qris" {{ old('payment_method') == 'qris' ? 'checked' : '' }} class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+                                        <div>
+                                            <h3 class="font-medium">QRIS</h3>
+                                            <p class="text-sm text-gray-500">Scan QR code to pay</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="p-1 bg-white rounded shadow-xs inline-block">
+                                            <img src="https://images.seeklogo.com/logo-png/39/2/quick-response-code-indonesia-standard-qris-logo-png_seeklogo-391791.png" class="h-6" alt="QRIS">
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="payment-method border rounded-lg p-4 cursor-pointer hover:border-blue-300 transition-colors duration-200 {{ old('payment_method') == 'cash' ? 'border-blue-500 bg-blue-50' : 'border-gray-200' }}">
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="payment_method" value="cash" {{ old('payment_method') == 'cash' ? 'checked' : '' }} class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+                                        <div>
+                                            <h3 class="font-medium">Pay on Arrival</h3>
+                                            <p class="text-sm text-gray-500">Pay when you check in</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="p-1 bg-white rounded shadow-xs inline-block">
+                                            <i class="fas fa-money-bill-wave text-green-500 text-xl"></i>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            @error('payment_method') 
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p> 
+                            @enderror
                         </div>
-                    </div>
-                </div>
 
-                {{-- Additional error fields --}}
-                @error('night_count') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
-                @error('room_price') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
-                @error('tax') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
-                @error('service_charge') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
-                @error('total_price') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @endif
+                        {{-- Price Summary --}}
+                        <div class="mb-8 bg-gray-50 p-6 rounded-xl border border-gray-200">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-receipt text-blue-500 mr-3"></i> Price Summary
+                            </h2>
+                            
+                            <div class="space-y-3">
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <div>
+                                        <span class="text-gray-600">Room (× <span id="nightsDisplay">1</span> nights)</span>
+                                        <p class="text-xs text-gray-400">Base price</p>
+                                    </div>
+                                    <span id="summaryRoom" class="font-medium">Rp0</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <div>
+                                        <span class="text-gray-600">Tax (10%)</span>
+                                        <p class="text-xs text-gray-400">Government tax</p>
+                                    </div>
+                                    <span id="summaryTax" class="font-medium">Rp0</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <div>
+                                        <span class="text-gray-600">Service Fee (5%)</span>
+                                        <p class="text-xs text-gray-400">Hotel service charge</p>
+                                    </div>
+                                    <span id="summaryFee" class="font-medium">Rp0</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <div>
+                                        <span class="text-gray-600">Discount</span>
+                                        <p class="text-xs text-gray-400">Promo savings</p>
+                                    </div>
+                                    <span id="summaryDiscount" class="font-medium text-green-600">-Rp0</span>
+                                </div>
+                                <div class="flex justify-between pt-3">
+                                    <div>
+                                        <span class="font-semibold text-gray-700">Total</span>
+                                        <p class="text-xs text-gray-400">Amount to be paid</p>
+                                    </div>
+                                    <span id="summaryTotal" class="text-xl font-bold text-blue-600">Rp0</span>
+                                </div>
+                            </div>
+                        </div>
 
-                {{-- Terms & Submit --}}
-                <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-                    <label class="flex items-center space-x-3">
-                        <input type="checkbox" name="agree_terms" {{ old('agree_terms') ? 'checked' : '' }} required class="text-blue-600 rounded focus:ring-blue-400">
-                        <span class="text-gray-600 text-sm">I agree to the <a href="#" class="text-blue-500 underline">terms & conditions</a>.</span>
-                    </label>
-                    <button type="submit" class="bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 transform hover:scale-105 transition duration-200">
-                        <i class="fas fa-lock mr-2"></i> Book Now
-                    </button>
+                        {{-- Terms & Submit --}}
+                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                            <label class="flex items-start space-x-3">
+                                <input type="checkbox" name="agree_terms" {{ old('agree_terms') ? 'checked' : '' }} required 
+                                       class="mt-1 h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                                <span class="text-gray-600 text-sm">
+                                    I agree to the <a href="#" class="text-blue-600 hover:underline">terms & conditions</a> and <a href="#" class="text-blue-600 hover:underline">privacy policy</a>. I understand that my booking is subject to cancellation policies.
+                                </span>
+                            </label>
+                            <button type="submit" 
+                                    class="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-bold shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                <i class="fas fa-lock mr-2"></i> Complete Booking
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </section>
@@ -245,23 +496,108 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <style>
-.room-option.selected {
-    border-color: #3B82F6;
-    box-shadow: 0 0 0 2px rgba(59,130,246,0.3);
-}
-.icon-check {
-    transition: opacity 0.2s ease-in-out;
+/* Room Options */
+.room-option {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid #e5e7eb;
+    position: relative;
 }
 .room-option:hover {
-    transform: scale(1.02);
+    border-color: #93c5fd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
-.text-green-600 { color: #16a34a; }
-.text-red-600 { color: #dc2626; }
-.hidden { display: none; }
-</style>
+.room-option.selected {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.05);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
+}
+.room-option.selected:hover {
+    border-color: #2563eb;
+}
 
+/* Icon Check */
+.icon-check {
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+.room-option.selected .icon-check {
+    opacity: 1;
+    color: #3b82f6;
+}
+
+/* Price Summary */
+.price-summary-container {
+    transition: all 0.3s ease;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+.price-summary-container.visible {
+    max-height: 500px;
+    opacity: 1;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Steps */
+#bookingSteps li {
+    transition: all 0.3s ease;
+}
+#bookingSteps li:not(.active-step) {
+    opacity: 0.7;
+}
+#bookingSteps li div {
+    transition: all 0.3s ease;
+}
+
+/* Form Elements */
+input[type="date"]:disabled,
+input[type="text"]:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+
+/* Promo Message */
+#promoMessage {
+    transition: all 0.3s ease;
+}
+#promoMessage.hidden {
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* Payment Methods */
+.payment-method {
+    transition: all 0.3s ease;
+    border: 2px solid #e5e7eb;
+}
+.payment-method:hover {
+    border-color: #93c5fd;
+}
+.payment-method input[type="radio"]:checked ~ div {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .room-option {
+        margin-bottom: 1rem;
+    }
+    #bookingSteps li {
+        margin-bottom: 1.5rem;
+    }
+}
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // DOM element references
     const form = document.getElementById('bookingForm');
     const roomOptions = document.querySelectorAll('.room-option');
     const checkIn = document.getElementById('checkIn');
@@ -284,11 +620,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const summaryTotal = document.getElementById('summaryTotal');
 
     // Verify DOM elements
-    if (!form || !roomOptions || !checkIn || !checkOut || !promoInput || !applyPromoBtn || !promoMessage ||
-        !discountInput || !promoCodeIdInput || !selectedRoomPrice || !nightsInput || !taxInput ||
-        !serviceChargeInput || !totalInput || !nightsDisplay || !summaryRoom || !summaryTax ||
-        !summaryFee || !summaryDiscount || !summaryTotal) {
-        console.error('One or more DOM elements are missing');
+    if (!form || !roomOptions.length || !checkIn || !checkOut || !promoInput || !applyPromoBtn || 
+        !promoMessage || !discountInput || !promoCodeIdInput || !selectedRoomPrice || !nightsInput || 
+        !taxInput || !serviceChargeInput || !totalInput || !nightsDisplay || !summaryRoom || 
+        !summaryTax || !summaryFee || !summaryDiscount || !summaryTotal) {
+        console.error('Missing required DOM elements');
         return;
     }
 
@@ -296,64 +632,68 @@ document.addEventListener('DOMContentLoaded', () => {
     let promoCodes = {};
     try {
         const promoDataElement = document.getElementById('promoData');
-        if (promoDataElement && promoDataElement.dataset.promos) {
+        if (promoDataElement?.dataset.promos) {
             promoCodes = JSON.parse(promoDataElement.dataset.promos);
-            console.log('Available promo codes:', promoCodes);
+            console.log('Loaded promo codes:', Object.keys(promoCodes));
         } else {
-            console.warn('No promo data found');
+            console.warn('Promo data not found');
         }
     } catch (error) {
-        console.error('Error parsing promo data:', error);
-        promoMessage.textContent = 'Error loading promo codes.';
-        promoMessage.classList.add('text-red-600');
+        console.error('Failed to parse promo data:', error);
+        promoMessage.textContent = 'Error loading promo codes';
+        promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
         promoMessage.classList.remove('hidden');
     }
 
     // Load room prices
     const priceEl = document.getElementById('roomPrices');
-    const hotelPrices = {
+    const roomPrices = {
         single: parseFloat(priceEl.dataset.single) || 0,
         double: parseFloat(priceEl.dataset.double) || 0,
         family: parseFloat(priceEl.dataset.family) || 0,
     };
-    console.log('Room prices:', hotelPrices);
+    console.log('Loaded room prices:', roomPrices);
 
+    // Format number to Rupiah
     function formatRupiah(value) {
         return 'Rp' + Math.round(value).toLocaleString('id-ID');
     }
 
+    // Calculate number of nights
     function getNightCount() {
         if (!checkIn.value || !checkOut.value) {
-            console.warn('Check-in or check-out date missing');
+            console.warn('Missing check-in or check-out date');
             return 1;
         }
         const diff = Math.ceil((new Date(checkOut.value) - new Date(checkIn.value)) / (1000 * 60 * 60 * 24));
-        const nights = diff > 0 ? diff : 1;
-        console.log('Calculated nights:', nights);
+        const nights = Math.max(diff, 1);
+        console.log('Nights calculated:', nights);
         return nights;
     }
 
+    // Calculate and update prices
     function calculatePrices() {
         const nights = getNightCount();
         const price = parseFloat(selectedRoomPrice.value) || 0;
         if (isNaN(price) || price <= 0) {
-            console.warn('Invalid room price', { price });
+            console.warn('Invalid room price:', price);
             return;
         }
+
         const subtotal = price * nights;
         const tax = subtotal * 0.10;
         const service = subtotal * 0.05;
         let discount = parseFloat(discountInput.value) || 0;
 
         if (isNaN(discount) || discount < 0) {
-            console.warn('Invalid discount value, resetting to 0', { discount });
+            console.warn('Invalid discount:', discount);
             discount = 0;
             discountInput.value = '0';
         }
 
         const total = Math.max(subtotal + tax + service - discount, 0);
 
-        // Update hidden inputs
+        // Update form inputs
         nightsInput.value = nights;
         taxInput.value = tax.toFixed(2);
         serviceChargeInput.value = service.toFixed(2);
@@ -368,38 +708,44 @@ document.addEventListener('DOMContentLoaded', () => {
         summaryDiscount.textContent = formatRupiah(discount);
         summaryTotal.textContent = formatRupiah(total);
 
-        console.log('Price calculation:', { nights, price, subtotal, tax, service, discount, total });
+        console.log('Price breakdown:', { nights, price, subtotal, tax, service, discount, total });
     }
 
+    // Clear promo code data
     function clearPromo() {
         promoMessage.textContent = '';
         promoMessage.classList.add('hidden');
-        promoMessage.classList.remove('text-red-600', 'text-green-600');
+        promoMessage.classList.remove('text-red-600', 'text-green-600', 'border', 'border-red-200', 'border-green-200', 'bg-red-50', 'bg-green-50');
         promoInput.value = '';
         promoCodeIdInput.value = '';
         discountInput.value = '0';
-        console.log('Promo cleared');
+        console.log('Promo code reset');
         calculatePrices();
     }
 
+    // Room selection handler
     roomOptions.forEach(option => {
         option.addEventListener('click', () => {
             roomOptions.forEach(o => {
-                o.classList.remove('selected', 'border-blue-500');
+                o.classList.remove('selected', 'border-blue-500', 'bg-blue-50');
                 o.classList.add('border-gray-200');
-                o.querySelector('.icon-check').classList.add('opacity-0');
+                o.querySelector('.icon-check').classList.remove('text-blue-600');
+                o.querySelector('.icon-check').classList.add('text-blue-300');
             });
-            option.classList.add('selected', 'border-blue-500');
+            option.classList.add('selected', 'border-blue-500', 'bg-blue-50');
             option.classList.remove('border-gray-200');
-            option.querySelector('.icon-check').classList.remove('opacity-0');
+            option.querySelector('.icon-check').classList.add('text-blue-600');
+            option.querySelector('.icon-check').classList.remove('text-blue-300');
 
             const price = parseFloat(option.dataset.price) || 0;
             selectedRoomPrice.value = price.toFixed(2);
-            console.log('Selected room price:', price);
+            option.querySelector('input[name="room_type"]').checked = true;
+            console.log('Room selected:', { type: option.dataset.type, price });
             clearPromo();
         });
     });
 
+    // Check-in date handler
     checkIn.addEventListener('change', () => {
         if (checkIn.value) {
             const minOut = new Date(checkIn.value);
@@ -407,129 +753,136 @@ document.addEventListener('DOMContentLoaded', () => {
             checkOut.min = minOut.toISOString().split('T')[0];
             if (checkOut.value && new Date(checkOut.value) <= new Date(checkIn.value)) {
                 checkOut.value = '';
-                console.log('Check-out date reset due to invalid range');
+                console.log('Check-out date cleared due to invalid range');
             }
         }
         calculatePrices();
     });
 
+    // Check-out date handler
     checkOut.addEventListener('change', calculatePrices);
 
+    // Apply promo code handler
     applyPromoBtn.addEventListener('click', () => {
         const code = promoInput.value.trim().toUpperCase();
-        console.log('Applying promo code:', code);
+        console.log('Attempting to apply promo:', code);
         clearPromo();
 
         const promo = promoCodes[code];
         if (promo && promo.active) {
             const today = new Date().toISOString().split('T')[0];
             if (promo.valid_from && promo.valid_from > today) {
-                promoMessage.textContent = `Promo ${code} is not yet valid until ${promo.valid_from}.`;
-                promoMessage.classList.add('text-red-600');
+                promoMessage.textContent = `Promo ${code} valid from ${promo.valid_from}`;
+                promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
                 promoMessage.classList.remove('hidden');
-                console.log('Promo not yet valid:', { code, valid_from: promo.valid_from });
+                console.log('Promo not yet valid:', promo.valid_from);
                 calculatePrices();
-            } else if (promo.valid_until && promo.valid_until < today) {
-                promoMessage.textContent = `Promo ${code} expired on ${promo.valid_until}.`;
-                promoMessage.classList.add('text-red-600');
-                promoMessage.classList.remove('hidden');
-                console.log('Promo expired:', { code, valid_until: promo.valid_until });
-                calculatePrices();
-            } else {
-                let discount = 0;
-                let discountType = '';
-                if (promo.percent !== null && !isNaN(parseFloat(promo.percent)) && parseFloat(promo.percent) > 0) {
-                    const nights = getNightCount();
-                    const price = parseFloat(selectedRoomPrice.value) || 0;
-                    const subtotal = price * nights;
-                    discount = subtotal * (parseFloat(promo.percent) / 100);
-                    discountType = `${parseFloat(promo.percent)}%`;
-                    console.log('Applying percentage discount:', { code, percent: promo.percent, subtotal, discount });
-                } else if (promo.amount !== null && !isNaN(parseFloat(promo.amount)) && parseFloat(promo.amount) > 0) {
-                    discount = parseFloat(promo.amount);
-                    discountType = formatRupiah(promo.amount);
-                    console.log('Applying fixed amount discount:', { code, amount: promo.amount, discount });
-                } else {
-                    promoMessage.textContent = `Promo ${code} has no valid discount.`;
-                    promoMessage.classList.add('text-red-600');
-                    promoMessage.classList.remove('hidden');
-                    console.log('No valid discount for promo:', { code, amount: promo.amount, percent: promo.percent });
-                    calculatePrices();
-                    return;
-                }
-
-                if (discount <= 0) {
-                    promoMessage.textContent = `Promo ${code} resulted in no discount.`;
-                    promoMessage.classList.add('text-red-600');
-                    promoMessage.classList.remove('hidden');
-                    console.log('Invalid discount calculated:', { code, discount });
-                    calculatePrices();
-                    return;
-                }
-
-                promoCodeIdInput.value = promo.id;
-                promoInput.value = code;
-                discountInput.value = discount.toFixed(2);
-                promoMessage.textContent = `Promo ${code} applied! Discount: ${discountType} (Rp${Math.round(discount).toLocaleString('id-ID')})`;
-                promoMessage.classList.add('text-green-600');
-                promoMessage.classList.remove('hidden');
-                console.log('Promo successfully applied:', { id: promo.id, code, discount, discountType });
-                calculatePrices();
+                return;
             }
+            if (promo.valid_until && promo.valid_until < today) {
+                promoMessage.textContent = `Promo ${code} expired on ${promo.valid_until}`;
+                promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
+                promoMessage.classList.remove('hidden');
+                console.log('Promo expired:', promo.valid_until);
+                calculatePrices();
+                return;
+            }
+
+            let discount = 0;
+            let discountType = '';
+            const nights = getNightCount();
+            const price = parseFloat(selectedRoomPrice.value) || 0;
+            const subtotal = price * nights;
+
+            if (promo.percent && !isNaN(parseFloat(promo.percent)) && parseFloat(promo.percent) > 0) {
+                discount = subtotal * (parseFloat(promo.percent) / 100);
+                discountType = `${parseFloat(promo.percent)}%`;
+                console.log('Applied percentage discount:', { percent: promo.percent, discount });
+            } else if (promo.amount && !isNaN(parseFloat(promo.amount)) && parseFloat(promo.amount) > 0) {
+                discount = parseFloat(promo.amount);
+                discountType = formatRupiah(promo.amount);
+                console.log('Applied fixed discount:', { amount: promo.amount, discount });
+            } else {
+                promoMessage.textContent = `Invalid discount for promo ${code}`;
+                promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
+                promoMessage.classList.remove('hidden');
+                console.log('Invalid discount data:', promo);
+                calculatePrices();
+                return;
+            }
+
+            if (discount <= 0) {
+                promoMessage.textContent = `Promo ${code} has no valid discount`;
+                promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
+                promoMessage.classList.remove('hidden');
+                console.log('No discount applied:', { code, discount });
+                calculatePrices();
+                return;
+            }
+
+            promoCodeIdInput.value = promo.id;
+            promoInput.value = code;
+            discountInput.value = discount.toFixed(2);
+            promoMessage.textContent = `Promo ${code} applied! Save ${discountType} (${formatRupiah(discount)})`;
+            promoMessage.classList.add('text-green-600', 'border', 'border-green-200', 'bg-green-50');
+            promoMessage.classList.remove('hidden');
+            console.log('Promo applied:', { id: promo.id, code, discount, discountType });
+            calculatePrices();
         } else {
-            promoMessage.textContent = 'Invalid promo code.';
-            promoMessage.classList.add('text-red-600');
+            promoMessage.textContent = `Invalid promo code: ${code}`;
+            promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
             promoMessage.classList.remove('hidden');
             console.log('Invalid promo code:', code);
             calculatePrices();
         }
     });
 
+    // Form submission handler
     form.addEventListener('submit', (e) => {
-        e.preventDefault(); // Prevent default submission to validate
+        e.preventDefault();
         const formData = new FormData(form);
         const promoCode = formData.get('promo_code');
         const promoCodeId = formData.get('promo_code_id');
         const discountAmount = parseFloat(formData.get('discount_amount')) || 0;
         let totalPrice = parseFloat(formData.get('total_price')) || 0;
 
-        console.log('Attempting form submission with data:', Object.fromEntries(formData));
+        console.log('Form submission data:', Object.fromEntries(formData));
 
         if (promoCode && !promoCodeId) {
-            promoMessage.textContent = 'Please apply the promo code before submitting.';
-            promoMessage.classList.add('text-red-600');
+            promoMessage.textContent = 'Please apply the promo code before submitting';
+            promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
             promoMessage.classList.remove('hidden');
-            console.error('Form submission prevented: Promo code entered but not applied', { promoCode, promoCodeId, discountAmount });
+            console.error('Submission error: Promo code not applied', { promoCode, promoCodeId });
             return;
         }
 
         if (promoCodeId && !promoCode) {
-            promoMessage.textContent = 'Promo code ID present but no promo code entered.';
-            promoMessage.classList.add('text-red-600');
+            promoMessage.textContent = 'Promo code ID present without code';
+            promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
             promoMessage.classList.remove('hidden');
-            console.error('Form submission prevented: Promo code ID without code', { promoCode, promoCodeId, discountAmount });
+            console.error('Submission error: Promo code ID without code', { promoCode, promoCodeId });
             return;
         }
 
         if (isNaN(discountAmount) || discountAmount < 0) {
-            promoMessage.textContent = 'Invalid discount amount.';
-            promoMessage.classList.add('text-red-600');
+            promoMessage.textContent = 'Invalid discount amount';
+            promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
             promoMessage.classList.remove('hidden');
-            console.error('Form submission prevented: Invalid discount amount', { promoCode, promoCodeId, discountAmount });
+            console.error('Submission error: Invalid discount', { discountAmount });
             discountInput.value = '0';
             calculatePrices();
             return;
         }
 
         if (promoCode && discountAmount <= 0) {
-            promoMessage.textContent = 'Promo code applied but no discount calculated.';
-            promoMessage.classList.add('text-red-600');
+            promoMessage.textContent = 'Promo code applied but no discount';
+            promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
             promoMessage.classList.remove('hidden');
-            console.error('Form submission prevented: No discount for promo code', { promoCode, promoCodeId, discountAmount });
+            console.error('Submission error: No discount for promo', { promoCode, discountAmount });
             return;
         }
 
-        // Recalculate prices to ensure accuracy
+        // Final price validation
         const nights = getNightCount();
         const price = parseFloat(selectedRoomPrice.value) || 0;
         const subtotal = price * nights;
@@ -540,22 +893,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         totalInput.value = expectedTotal.toFixed(2);
         summaryTotal.textContent = formatRupiah(expectedTotal);
-        console.log('Final price before submission:', { subtotal, tax, service, discount, expectedTotal });
+        console.log('Final prices:', { subtotal, tax, service, discount, expectedTotal });
 
-        // Rebuild form data with updated total
         formData.set('total_price', expectedTotal.toFixed(2));
-        console.log('Updated form submission data:', Object.fromEntries(formData));
+        console.log('Submitting form with data:', Object.fromEntries(formData));
 
-        // Submit the form manually
         form.submit();
     });
 
-    // Set minimum date for check-in to today
-    const today = new Date().toISOString().split('T')[0];
-    checkIn.min = today;
+    // Set minimum check-in date
+    checkIn.min = new Date().toISOString().split('T')[0];
 
-    // Initial calculation
+    // Initial price calculation
     calculatePrices();
 });
 </script>
+
 @endsection

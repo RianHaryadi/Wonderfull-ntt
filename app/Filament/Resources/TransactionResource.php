@@ -349,6 +349,8 @@ class TransactionResource extends Resource
             'edit' => Pages\EditTransaction::route('/{record}/edit'),
         ];
     }
+
+    
     
 
     // Override before save to re-check total price calculation (optional)

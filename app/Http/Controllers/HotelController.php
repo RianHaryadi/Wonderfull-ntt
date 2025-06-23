@@ -9,12 +9,24 @@ class HotelController extends Controller
 {
     public function index(Request $request)
     {
-        $location = $request->input('location');
+        // Get unique locations for the filter dropdown
+        $locations = Hotel::select('location')
+                         ->distinct()
+                         ->whereNotNull('location')
+                         ->orderBy('location')
+                         ->pluck('location');
 
-        $hotels = Hotel::when($location, function ($query, $location) {
-            return $query->where('location', $location);
-        })->get();
-        
-        return view('hotel.index', compact('hotels'));
+        // Filter hotels based on location if provided
+        $hotels = Hotel::when($request->location, function($query) use ($request) {
+            return $query->where('location', $request->location);
+        })
+        ->orderBy('name') // Default sorting
+        ->paginate(12); // 12 items per page
+
+        return view('hotel.index', [
+            'hotels' => $hotels,
+            'locations' => $locations,
+            'selectedLocation' => $request->location
+        ]);
     }
 }

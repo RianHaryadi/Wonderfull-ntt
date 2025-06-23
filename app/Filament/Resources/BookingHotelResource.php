@@ -507,4 +507,24 @@ class BookingHotelResource extends Resource
             'edit' => Pages\EditBookingHotel::route('/{record}/edit'),
         ];
     }
+    
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) BookingHotel::count();
+    }
+
+    public static function getNavigationBadgeColor(): string | array | null
+    {
+        $count = BookingHotel::count();
+
+        if ($count == 0) {
+            return 'gray';
+        } elseif ($count < 5) {
+            return 'warning';
+        } elseif ($count < 20) {
+            return 'success';
+        } else {
+            return 'success';
+        }
+    }
 }

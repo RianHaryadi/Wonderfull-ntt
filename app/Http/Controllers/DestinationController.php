@@ -25,7 +25,7 @@ class DestinationController extends Controller
         }
 
         // Ambil hasil paginasi dan simpan query string agar search dan filter tetap aktif saat pindah halaman
-        $destinations = $query->orderBy('created_at', 'desc')->paginate(9)->withQueryString();
+        $destinations = $query->orderBy('created_at', 'desc')->paginate(12)->withQueryString();
 
         return view('destinations.index', compact('destinations'));
     }

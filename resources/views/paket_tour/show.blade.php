@@ -125,30 +125,6 @@
             <span><strong>Kategori:</strong> {{ ucfirst($paketTour->category ?? 'N/A') }}</span>
           </div>
         </div>
-
-        <!-- Hotel Selection -->
-        <div class="border p-4 rounded-lg">
-          <h2 class="font-bold text-xl mb-2">Pilih Hotel</h2>
-          <select onchange="updateHotelImage(this, 'package')" class="w-full border rounded-lg p-2">
-            <option value="">-- Pilih Hotel --</option>
-            @foreach ($paketTour->hotels as $hotel)
-              <option value="{{ $hotel->id }}" data-image="{{ $hotel->image ? asset('storage/' . ltrim($hotel->image, '/')) : $fallbackHotelImage }}" selected>
-                {{ $hotel->name }} ({{ $hotel->location }})
-              </option>
-            @endforeach
-            @forelse($allHotels as $hotel)
-              <option value="{{ $hotel->id }}" data-image="{{ $hotel->image ? asset('storage/' . ltrim($hotel->image, '/')) : $fallbackHotelImage }}">
-                {{ $hotel->name }} ({{ $hotel->location }})
-              </option>
-            @empty
-              <option value="" disabled>Tidak ada hotel tersedia</option>
-            @endforelse
-          </select>
-          <!-- Debug: Tampilkan jumlah hotel -->
-          <small class="text-gray-500">Debug: {{ $allHotels->count() }} hotel tersedia</small>
-          <img id="hotel-image-package" src="{{ $paketTour->hotels->first() ? ($paketTour->hotels->first()->image ? asset('storage/' . ltrim($paketTour->hotels->first()->image, '/')) : $fallbackHotelImage) : $fallbackHotelImage }}" alt="Hotel Image" class="hotel-image">
-        </div>
-
       </div>
     </div>
   </div>

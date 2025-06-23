@@ -78,6 +78,25 @@ class CodePromotionResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
         }
+        public static function getNavigationBadge(): ?string
+    {
+        return (string) CodePromotion::count();
+    }
+
+    public static function getNavigationBadgeColor(): string | array | null
+    {
+        $count = CodePromotion::count();
+
+        if ($count == 0) {
+            return 'gray';
+        } elseif ($count < 5) {
+            return 'warning';
+        } elseif ($count < 20) {
+            return 'success';
+        } else {
+            return 'success';
+        }
+    }
     
         public static function getPages(): array
         {
