@@ -1,41 +1,48 @@
-![Laravel Logo](https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
+</p>
 
-[![Build Status](https://github.com/laravel/framework/workflows/tests/badge.svg)](https://github.com/laravel/framework/actions)
-[![Total Downloads](https://img.shields.io/packagist/dt/laravel/framework)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://img.shields.io/packagist/v/laravel/framework)](https://packagist.org/packages/laravel/framework)
-[![License](https://img.shields.io/packagist/l/laravel/framework)](https://packagist.org/packages/laravel/framework)
+<p align="center">
+  <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+  <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+  <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Version"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
 ---
 
 # 🌴 Wonderful Indonesia – NTT
 
-A tourism web platform for **East Nusa Tenggara (NTT)** built with **Laravel 11**, **Tailwind CSS**, and **Vite**.  
-This application promotes cultural destinations, offers hotel booking, and allows users to book tour packages via a simple UI with an admin backend.
+A tourism web platform for **East Nusa Tenggara (NTT)** built using **Laravel 11**, **Tailwind CSS**, and **Vite**.  
+This application allows users to explore destinations, book hotels, and join tour packages with ease.  
+It includes a full admin dashboard, real-time transaction handling, and Midtrans payment integration.
 
 ---
 
 ## ✨ Features
 
-- 🏝️ Explore curated destinations in NTT  
-- 🏨 Book hotels by room type with real-time availability  
-- 🎒 Select & reserve tour packages (built-in or custom)  
-- 📦 Dynamic cart & transaction system  
-- 💳 Payment via Transfer or QRIS (Midtrans integration)  
-- 🧾 Discount system using promo codes  
-- 📩 Email and WhatsApp notifications for payment status  
-- 📄 QR Code ticketing & admin validation  
-- 🔐 Admin dashboard using FilamentPHP  
-- 📊 Printable and exportable reports for admin
+- 🏝️ Destination listings by region  
+- 🏨 Hotel booking with room type & availability control  
+- 🎒 Tour package booking (grouped or per-item)  
+- 🛒 Cart system with dynamic pricing and discounts  
+- 💳 Payment via bank transfer or QRIS (Midtrans)  
+- 🧾 Promo code integration  
+- 📩 Email & WhatsApp notifications  
+- 🎟️ QR Code ticketing & admin verification  
+- 🔐 Admin panel powered by FilamentPHP  
+- 📈 Exportable reports (PDF/Excel) for finance monitoring
 
 ---
 
 ## 🧭 Tech Stack
 
-- Backend: **Laravel 11**, **FilamentPHP**
-- Frontend: **Tailwind CSS**, **Blade**, **Vite**
-- Database: **MySQL 8+**
-- Payment: **Midtrans (Transfer & QRIS)**
-- Notification: **Email & WhatsApp API**
+| Layer       | Stack                          |
+|-------------|-------------------------------|
+| Backend     | Laravel 11, FilamentPHP       |
+| Frontend    | Blade, Tailwind CSS, Vite     |
+| Database    | MySQL 8+                      |
+| Payments    | Midtrans (Transfer & QRIS)    |
+| Notifications | Laravel Mail, WhatsApp API |
 
 ---
 
@@ -50,20 +57,17 @@ This application promotes cultural destinations, offers hotel booking, and allow
 │   │   └── Resources/
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   ├── Middleware/
+│   │   └── Middleware/
 │   ├── Models/
 │   └── Providers/
 ├── bootstrap/
 │   └── app.php
 ├── config/
-│   ├── app.php
-│   └── ... (config files)
 ├── database/
 │   ├── factories/
 │   ├── migrations/
 │   └── seeders/
 ├── public/
-│   └── index.php
 ├── resources/
 │   ├── css/
 │   ├── js/
@@ -72,51 +76,46 @@ This application promotes cultural destinations, offers hotel booking, and allow
 │   ├── web.php
 │   └── api.php
 ├── storage/
-│   ├── app/
-│   ├── framework/
-│   └── logs/
 ├── tests/
-│   └── Feature/
+│   ├── Feature/
 │   └── Unit/
 ├── .env.example
 ├── artisan
 ├── composer.json
 ├── package.json
 ├── vite.config.js
+⚙️ Project Setup
+✅ Requirements
+PHP ≥ 8.1
 
----
+Composer 2.x
 
-## ⚙️ Setup Instructions
+Node.js ≥ 16
 
-### ✅ Requirements
+MySQL 8 / PostgreSQL / SQLite
 
-- PHP 8.1+
-- Composer 2+
-- Node.js 16+
-- MySQL or compatible DB
-
-### 🛠 Installation
-
-```bash
-# Clone the repo
+🛠 Installation Steps
+bash
+Copy code
+# 1. Clone repository
 git clone https://github.com/your-username/wonderful-ntt.git
 cd wonderful-ntt
 
-# Install backend dependencies
+# 2. Install PHP dependencies
 composer install
 
-# Copy and setup environment
+# 3. Setup environment
 cp .env.example .env
 php artisan key:generate
 
-# Install frontend dependencies
+# 4. Install JS dependencies & compile assets
 npm install
 npm run dev
 
-# Run migration & seeder
+# 5. Run migrations & seed data
 php artisan migrate --seed
 
-# Start server
+# 6. Start development server
 php artisan serve
 🧪 Testing
 bash
@@ -129,32 +128,34 @@ npm run build
 📘 Learn More
 Laravel Documentation
 
-FilamentPHP Docs
+FilamentPHP
 
-Tailwind CSS Docs
+Tailwind CSS
 
-Midtrans API Docs
+Midtrans Integration
 
 📫 Contact
-For collaboration or technical inquiries:
+For contributions, support, or collaboration:
 
-Email: yourname@example.com
+📧 Email: yourname@example.com
 
-WhatsApp: +62-812-xxxx-xxxx
+📱 WhatsApp: +62-812-xxxx-xxxx
 
 🔐 Security
-If you discover a security vulnerability, please report it to: security@laravel.com
+If you discover a security vulnerability, please report it via email.
+For framework-level issues, refer to Laravel Security Policy.
 
 🪪 License
 This project is open-sourced under the MIT License.
 
-yaml
-Copy code
+✨ Feel free to fork, contribute, or customize this platform to fit your own region or tourism project!
+
 
 ---
 
-📌 **Cara pakai**:
-1. Buka proyek kamu di GitHub
-2. Tambahkan file baru `README.md`
-3. Paste semua isi di atas
-4. Komit dan push
+### Kelebihan versi ini:
+- Lebih estetis, profesional, dan informatif
+- Struktur terorganisir dengan baik dan mudah di-scan
+- Tabel stack teknologi
+- Blok kode jelas & blok quote motivasional di akhir
+- Bisa dipakai langsung di GitHub (tanpa edit tambahan)
