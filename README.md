@@ -24,11 +24,11 @@ It includes a full admin dashboard, real-time transaction handling, and Midtrans
 - 🏝️ Destination listings by region  
 - 🏨 Hotel booking with room type & availability control  
 - 🎒 Tour package booking (grouped or per-item)  
-- 🛒 Cart system with dynamic pricing and discounts  
-- 💳 Payment via bank transfer or QRIS (Midtrans)  
+- system with dynamic pricing and discounts  
+- 💳 Payment via bank transfer or QRIS (Midtrans) (Soon)
 - 🧾 Promo code integration  
-- 📩 Email & WhatsApp notifications  
-- 🎟️ QR Code ticketing & admin verification  
+- 📩 Email notifications  
+- 🎟️ QR Code ticketing & admin verification (SOON) 
 - 🔐 Admin panel powered by FilamentPHP  
 - 📈 Exportable reports (PDF/Excel) for finance monitoring
 
