@@ -9,27 +9,41 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('transactions', function (Blueprint $table) {
+            public function up(): void
+            {
+            Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('customer_name')->default('Unknown');
-            $table->string('customer_email')->default('example@example.com');
-            $table->string('customer_phone')->default('0000000000');
-            $table->decimal('base_price', 12, 2)->default(0.00);
-            $table->unsignedInteger('ticket_quantity')->default(1);
-            $table->string('promo_code')->nullable()->default(null);
-            $table->decimal('discount', 12, 2)->default(0);
-            $table->decimal('total_price', 12, 2)->default(0.00);
-            $table->enum('payment_method', ['pending', 'transfer', 'qris', 'cash'])->default('pending');
-            $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
-            $table->dateTime('transaction_date')->nullable();
-            $table->unsignedBigInteger('tour_package_id')->nullable();
-            $table->foreign('tour_package_id')->references('id')->on('tour_packages')->onDelete('set null');
-            $table->string('room_type')->nullable(); // single, double, family
-            $table->timestamps();
+            $table->string('booking_code')->unique();
 
+            // Customer info
+            $table->string('customer_name');
+            $table->string('customer_email');
+            $table->string('customer_phone');
+
+            // Tour Package relation
+            $table->foreignId('tour_package_id')->nullable()->constrained();
+            $table->foreignId('destination_id')->nullable()->constrained()->nullOnDelete();
+
+            //diskon
+            $table->decimal('discount_amount', 10, 2)->nullable();
+            $table->decimal('discount_percent', 5, 2)->nullable();
+
+            // Booking details
+            $table->dateTime('booking_date');
+            $table->integer('number_of_tickets');
+
+            // Pricing
+            $table->decimal('package_price', 12, 2);
+            $table->decimal('discount', 12, 2)->default(0);
+            $table->decimal('total_price', 12, 2);
+
+            // Payment
+            $table->enum('payment_method', ['transfer', 'qris', 'cash'])->nullable();
+            $table->enum('status', ['pending', 'paid', 'confirmed', 'completed', 'cancelled', 'expired'])->default('pending');
+
+            $table->timestamps();
         });
+
     }
 
     /**

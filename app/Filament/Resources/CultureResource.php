@@ -18,7 +18,7 @@ class CultureResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'Cultures';
     protected static ?string $modelLabel = 'Culture';
-    protected static ?string $pluralModelLabel = 'Cultur    es';
+    protected static ?string $pluralModelLabel = 'Cultures';
 
     public static function form(Form $form): Form
     {
@@ -88,12 +88,23 @@ class CultureResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+    public static function getNavigationBadge(): ?string
+{
+    return (string) static::getModel()::count();
+}
+
+public static function getNavigationBadgeColor(): string | array | null
+{
+    $count = static::getModel()::count();
+
+    return match (true) {
+        $count === 0        => 'gray',
+        $count < 5          => 'warning',
+        $count < 20         => 'success',
+        default             => 'primary',
+    };
+}
+
 
     public static function getPages(): array
     {

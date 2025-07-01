@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Booking Hotel - ' . $hotel->name)
@@ -40,9 +39,9 @@
                                 @php
                                     $facilities = is_array($hotel->facilities)
                                         ? $hotel->facilities
-                                        : explode(',', $hotel->facilities);
+                                        : ($hotel->facilities ? explode(',', $hotel->facilities) : []);
                                 @endphp
-                                @foreach($facilities as $facility)
+                                @forelse($facilities as $facility)
                                     @php $f = strtolower(trim($facility)); @endphp
                                     <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100 text-sm">
                                         @if(str_contains($f, 'wifi')) <i class="fas fa-wifi text-sm"></i>
@@ -56,7 +55,9 @@
                                         @endif
                                         <span>{{ ucwords(trim($facility)) }}</span>
                                     </div>
-                                @endforeach
+                                @empty
+                                    <span class="text-gray-500 text-sm">No facilities available</span>
+                                @endforelse
                             </div>
                         </div>
                     </div>
@@ -71,7 +72,6 @@
                 <div class="md:w-1/3 bg-blue-600 text-white p-6 md:p-8">
                     <h2 class="text-2xl font-bold mb-6">Booking Steps</h2>
                     <ol id="bookingSteps" class="space-y-6">
-                        <!-- Step 1 -->
                         <li class="flex items-start space-x-4">
                             <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
                                 <span class="font-semibold">1</span>
@@ -81,19 +81,15 @@
                                 <p class="text-blue-100 text-sm mt-1">Choose your preferred room type</p>
                             </div>
                         </li>
-                        
-                        <!-- Step 2 -->
                         <li class="flex items-start space-x-4 opacity-70">
                             <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-700 flex items-center justify-center">
                                 <span class="font-semibold">2</span>
                             </div>
                             <div>
-                                <h3 class="font-semibold">Dates & Promo Cod </h3>
-                                <p class="text-blue-100 text-sm mt-1">Select dates and Promo Cod</p>
+                                <h3 class="font-semibold">Dates & Promo Code</h3>
+                                <p class="text-blue-100 text-sm mt-1">Select dates and apply promo code</p>
                             </div>
                         </li>
-                        
-                        <!-- Step 3 -->
                         <li class="flex items-start space-x-4 opacity-70">
                             <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-700 flex items-center justify-center">
                                 <span class="font-semibold">3</span>
@@ -103,8 +99,6 @@
                                 <p class="text-blue-100 text-sm mt-1">Enter guest information</p>
                             </div>
                         </li>
-                        
-                        <!-- Step 4 -->
                         <li class="flex items-start space-x-4 opacity-70">
                             <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-700 flex items-center justify-center">
                                 <span class="font-semibold">4</span>
@@ -289,9 +283,9 @@
                                 </button>
                             </div>
                             <div id="promoMessage" class="hidden mt-2 text-sm p-3 rounded-lg"></div>
-                            @error('promo_code') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            @error('promo_code_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                            @error('discount_amount') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                            @error('promo_code') 
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p> 
+                            @enderror
                         </div>
 
                         {{-- Guest Information --}}
@@ -595,6 +589,7 @@ input[type="text"]:disabled {
     }
 }
 </style>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // DOM element references
@@ -625,6 +620,7 @@ document.addEventListener('DOMContentLoaded', () => {
         !taxInput || !serviceChargeInput || !totalInput || !nightsDisplay || !summaryRoom || 
         !summaryTax || !summaryFee || !summaryDiscount || !summaryTotal) {
         console.error('Missing required DOM elements');
+        alert('An error occurred. Please refresh the page and try again.');
         return;
     }
 
@@ -665,7 +661,14 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('Missing check-in or check-out date');
             return 1;
         }
-        const diff = Math.ceil((new Date(checkOut.value) - new Date(checkIn.value)) / (1000 * 60 * 60 * 24));
+        const checkInDate = new Date(checkIn.value);
+        const checkOutDate = new Date(checkOut.value);
+        if (checkOutDate <= checkInDate) {
+            console.warn('Invalid date range');
+            checkOut.value = '';
+            return 1;
+        }
+        const diff = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
         const nights = Math.max(diff, 1);
         console.log('Nights calculated:', nights);
         return nights;
@@ -677,6 +680,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const price = parseFloat(selectedRoomPrice.value) || 0;
         if (isNaN(price) || price <= 0) {
             console.warn('Invalid room price:', price);
+            promoMessage.textContent = 'Please select a room type';
+            promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
+            promoMessage.classList.remove('hidden');
             return;
         }
 
@@ -762,8 +768,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check-out date handler
     checkOut.addEventListener('change', calculatePrices);
 
-    // Apply promo code handler
+    // Apply promo code handler with debouncing
+    let isApplyingPromo = false;
     applyPromoBtn.addEventListener('click', () => {
+        if (isApplyingPromo) return;
+        isApplyingPromo = true;
+        setTimeout(() => { isApplyingPromo = false; }, 500);
+
         const code = promoInput.value.trim().toUpperCase();
         console.log('Attempting to apply promo:', code);
         clearPromo();
@@ -772,7 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (promo && promo.active) {
             const today = new Date().toISOString().split('T')[0];
             if (promo.valid_from && promo.valid_from > today) {
-                promoMessage.textContent = `Promo ${code} valid from ${promo.valid_from}`;
+                promoMessage.textContent = `Promo ${code} is valid from ${promo.valid_from}`;
                 promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
                 promoMessage.classList.remove('hidden');
                 console.log('Promo not yet valid:', promo.valid_from);
@@ -792,6 +803,13 @@ document.addEventListener('DOMContentLoaded', () => {
             let discountType = '';
             const nights = getNightCount();
             const price = parseFloat(selectedRoomPrice.value) || 0;
+            if (price <= 0) {
+                promoMessage.textContent = 'Please select a room type before applying a promo code';
+                promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
+                promoMessage.classList.remove('hidden');
+                console.log('No room selected for promo');
+                return;
+            }
             const subtotal = price * nights;
 
             if (promo.percent && !isNaN(parseFloat(promo.percent)) && parseFloat(promo.percent) > 0) {
@@ -829,7 +847,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Promo applied:', { id: promo.id, code, discount, discountType });
             calculatePrices();
         } else {
-            promoMessage.textContent = `Invalid promo code: ${code}`;
+            promoMessage.textContent = `Invalid or inactive promo code: ${code}`;
             promoMessage.classList.add('text-red-600', 'border', 'border-red-200', 'bg-red-50');
             promoMessage.classList.remove('hidden');
             console.log('Invalid promo code:', code);
@@ -891,11 +909,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const discount = discountAmount;
         const expectedTotal = Math.max(subtotal + tax + service - discount, 0);
 
-        totalInput.value = expectedTotal.toFixed(2);
-        summaryTotal.textContent = formatRupiah(expectedTotal);
-        console.log('Final prices:', { subtotal, tax, service, discount, expectedTotal });
+        if (Math.abs(expectedTotal - totalPrice) > 0.01) {
+            console.warn('Client total price adjusted', { clientTotal: totalPrice, expectedTotal });
+            totalPrice = expectedTotal;
+            totalInput.value = totalPrice.toFixed(2);
+            summaryTotal.textContent = formatRupiah(totalPrice);
+        }
 
-        formData.set('total_price', expectedTotal.toFixed(2));
+        console.log('Final prices:', { subtotal, tax, service, discount, total: totalPrice });
+        formData.set('total_price', totalPrice.toFixed(2));
         console.log('Submitting form with data:', Object.fromEntries(formData));
 
         form.submit();
@@ -904,9 +926,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set minimum check-in date
     checkIn.min = new Date().toISOString().split('T')[0];
 
+    // Initialize check-out min date if check-in is set
+    if (checkIn.value) {
+        const minOut = new Date(checkIn.value);
+        minOut.setDate(minOut.getDate() + 1);
+        checkOut.min = minOut.toISOString().split('T')[0];
+        if (checkOut.value && new Date(checkOut.value) <= new Date(checkIn.value)) {
+            checkOut.value = '';
+            console.log('Check-out date cleared on load due to invalid range');
+        }
+    }
+
     // Initial price calculation
     calculatePrices();
 });
 </script>
-
 @endsection

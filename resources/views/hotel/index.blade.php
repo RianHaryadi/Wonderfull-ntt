@@ -81,6 +81,7 @@
     </div>
 </div>
 
+
 <!-- Hotel Grid Section -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <!-- Results Count and Sorting -->
@@ -92,15 +93,19 @@
             @endif
         </h2>
         
-        <div class="flex items-center space-x-4">
-            <span class="text-sm text-gray-600">Sort by:</span>
-            <select class="text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition">
-                <option>Recommended</option>
-                <option>Price (Low to High)</option>
-                <option>Price (High to Low)</option>
-                <option>Rating</option>
-            </select>
-        </div>
+        <form method="GET" action="{{ route('hotels.index') }}" id="sort-form">
+            <div class="flex items-center space-x-4">
+                <span class="text-sm text-gray-600">Sort by:</span>
+                <select name="sort" id="sort" class="text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition" onchange="this.form.submit()">
+                    <option value="recommended" {{ request('sort') == 'recommended' || !request('sort') ? 'selected' : '' }}>Recommended</option>
+                    <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price (Low to High)</option>
+                    <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price (High to Low)</option>
+                    <option value="rating_desc" {{ request('sort') == 'rating_desc' ? 'selected' : '' }}>Rating</option>
+                </select>
+                <!-- Hidden input to preserve location filter -->
+                <input type="hidden" name="location" value="{{ request('location') }}">
+            </div>
+        </form>
     </div>
     
     <!-- Hotel Cards Grid -->
@@ -113,6 +118,7 @@
                     $hotel->double_room_price ?? 999999999,
                     $hotel->family_room_price ?? 999999999,
                 ];
+                $minPrice = min(array_filter($prices, fn($val) => $val !== null));
                 $minPrice = min(array_filter($prices, fn($val) => $val !== null));
                 
                 // Generate a random rating between 3.5 and 5 for demo purposes
@@ -194,11 +200,74 @@
             </div>
         @endforeach
     </div>
-    
-    <!-- Pagination -->
-    <div class="mt-12">
-        {{ $hotels->links() }}
-    </div>
+
+    <div class="flex justify-center px-4 py-6 bg-white">
+  <nav class="flex items-center space-x-2" aria-label="Pagination">
+    <!-- Previous Button -->
+    <a href="{{ $hotels->previousPageUrl() }}" 
+       class="p-2 rounded-full transition-all duration-300 ease-out {{ $hotels->onFirstPage() ? 'text-gray-300 cursor-default' : 'text-blue-500 hover:bg-blue-50 hover:shadow-sm' }}"
+       {{ $hotels->onFirstPage() ? 'disabled' : '' }}>
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </a>
+
+    <!-- Dynamic Page Numbers -->
+    @php
+      $start = max(1, $hotels->currentPage() - 2);
+      $end = min($hotels->lastPage(), $hotels->currentPage() + 2);
+      
+      if($hotels->currentPage() < 3) $end = min(5, $hotels->lastPage());
+      if($hotels->currentPage() > $hotels->lastPage() - 2) $start = max(1, $hotels->lastPage() - 4);
+    @endphp
+
+    <!-- First Page + Ellipsis -->
+    @if($start > 1)
+      <a href="{{ $hotels->url(1) }}" 
+         class="w-10 h-10 flex items-center justify-center text-sm font-medium rounded-full transition-all duration-300 hover:bg-blue-50 hover:text-blue-600">
+        1
+      </a>
+      @if($start > 2)
+        <span class="w-10 h-10 flex items-center justify-center text-gray-400">...</span>
+      @endif
+    @endif
+
+    <!-- Page Numbers -->
+    @foreach(range($start, $end) as $page)
+      <a href="{{ $hotels->url($page) }}"
+         class="relative w-10 h-10 flex items-center justify-center text-sm font-medium rounded-full transition-all duration-300
+                {{ $page == $hotels->currentPage() 
+                   ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md shadow-blue-200' 
+                   : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600' }}">
+        {{ $page }}
+        @if($page == $hotels->currentPage())
+          <span class="absolute -bottom-1 w-4 h-1 bg-blue-400 rounded-full"></span>
+        @endif
+      </a>
+    @endforeach
+
+    <!-- Last Page + Ellipsis -->
+    @if($end < $hotels->lastPage())
+      @if($end < $hotels->lastPage() - 1)
+        <span class="w-10 h-10 flex items-center justify-center text-gray-400">...</span>
+      @endif
+      <a href="{{ $hotels->url($hotels->lastPage()) }}" 
+         class="w-10 h-10 flex items-center justify-center text-sm font-medium rounded-full transition-all duration-300 hover:bg-blue-50 hover:text-blue-600">
+        {{ $hotels->lastPage() }}
+      </a>
+    @endif
+
+    <!-- Next Button -->
+    <a href="{{ $hotels->nextPageUrl() }}"
+       class="p-2 rounded-full transition-all duration-300 ease-out {{ !$hotels->hasMorePages() ? 'text-gray-300 cursor-default' : 'text-blue-500 hover:bg-blue-50 hover:shadow-sm' }}"
+       {{ !$hotels->hasMorePages() ? 'disabled' : '' }}>
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </nav>
+</div>
+
     @else
     <div class="text-center py-16">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

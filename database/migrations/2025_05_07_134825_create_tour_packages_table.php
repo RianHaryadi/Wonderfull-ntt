@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tour_packages', function (Blueprint $table) {
         $table->id();
         $table->string('name');
-        $table->foreignId('destination_id')->nullable()->constrained()->onDelete('set null');
+        $table->foreignId('destination_id')->nullable()->constrained()->nullOnDelete();
         $table->decimal('price', 12, 2);
         $table->integer('days')->default(1);
         $table->boolean('includes_hotel')->default(false);
@@ -23,6 +23,8 @@ return new class extends Migration
         $table->string('category')->nullable();
         $table->text('photos')->nullable();
         $table->text('description')->nullable();
+        $table->float('rating', 2, 1)->nullable(); // nilai bintang dummy
+        $table->integer('rating_count')->nullable(); // jumlah review dummy
         $table->timestamps();
     });
 

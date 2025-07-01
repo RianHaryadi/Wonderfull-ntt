@@ -499,6 +499,24 @@ class BookingHotelResource extends Resource
         ]);
 }
 
+public static function getNavigationBadge(): ?string
+{
+    return (string) static::getModel()::count();
+}
+
+public static function getNavigationBadgeColor(): string | array | null
+{
+    $count = static::getModel()::count();
+
+    return match (true) {
+        $count === 0        => 'gray',
+        $count < 5          => 'warning',
+        $count < 20         => 'success',
+        default             => 'primary',
+    };
+}
+
+
     public static function getPages(): array
     {
         return [
@@ -508,23 +526,5 @@ class BookingHotelResource extends Resource
         ];
     }
     
-    public static function getNavigationBadge(): ?string
-    {
-        return (string) BookingHotel::count();
-    }
-
-    public static function getNavigationBadgeColor(): string | array | null
-    {
-        $count = BookingHotel::count();
-
-        if ($count == 0) {
-            return 'gray';
-        } elseif ($count < 5) {
-            return 'warning';
-        } elseif ($count < 20) {
-            return 'success';
-        } else {
-            return 'success';
-        }
-    }
+    
 }

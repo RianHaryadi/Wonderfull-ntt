@@ -17,17 +17,20 @@
 
             <!-- Search Box with Glassmorphism Effect -->
             <form action="{{ route('destinations.index') }}" method="GET"
-                  class="search-box mx-auto bg-white/10 backdrop-blur-md rounded-xl px-6 py-3 flex items-center shadow-2xl max-w-2xl border border-white/20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-200 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input type="text" name="search" placeholder="Search destinations..."
-                       class="flex-grow outline-none bg-transparent text-white placeholder-gray-300"
-                       value="{{ request('search') }}">
-                <button type="submit"
-                        class="ml-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 px-6 py-2 rounded-lg hover:from-yellow-500 hover:to-yellow-600 transition-all font-medium shadow-lg">
-                    Search
-                </button>
+                  class="search-box mx-auto bg-white/10 backdrop-blur-md rounded-xl px-6 py-3 flex flex-col sm:flex-row items-center gap-4 shadow-2xl max-w-3xl border border-white/20">
+                <div class="flex items-center w-full sm:w-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-200 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input type="text" name="search" placeholder="Search destinations..."
+                           class="flex-grow sm:flex-grow-0 outline-none bg-transparent text-white placeholder-gray-300 w-full sm:w-64"
+                           value="{{ request('search') }}">
+                </div>
+                    <button type="submit"
+                            class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 px-6 py-2 rounded-lg hover:from-yellow-500 hover:to-yellow-600 transition-all font-medium shadow-lg">
+                        Search
+                    </button>
+                </div>
             </form>
         </div>
     </header>
@@ -63,6 +66,27 @@
                         @if ($currentCategory)
                             in <span class="font-semibold text-blue-600">"{{ $currentCategory }}"</span>
                         @endif
+                        @if (request('is_popular'))
+                            <span class="font-semibold text-blue-600">Popular destinations</span>
+                        @endif
+                        @if (request('min_price') || request('max_price'))
+                            with price
+                            @if (request('min_price'))
+                                from ${{ number_format(request('min_price'), 2) }}
+                            @endif
+                            @if (request('max_price'))
+                                up to ${{ number_format(request('max_price'), 2) }}
+                            @endif
+                        @endif
+                        @if (request('min_rating') || request('max_rating'))
+                            with rating
+                            @if (request('min_rating'))
+                                {{ request('min_rating') }}+
+                            @endif
+                            @if (request('max_rating'))
+                                up to {{ request('max_rating') }}
+                            @endif
+                        @endif
                     </p>
                 </div>
 
@@ -71,10 +95,17 @@
                     @foreach ($categories as $category)
                         @php
                             $isActive = ($category === 'All' && !$currentCategory) || ($category !== 'All' && $currentCategory === $category);
-                            $params = ['search' => request('search')];
-                            if ($category !== 'All') $params['category'] = $category;
-                            
-                            // Icons for each category
+                            $params = [
+                                'search' => request('search'),
+                                'min_price' => request('min_price'),
+                                'max_price' => request('max_price'),
+                                'min_rating' => request('min_rating'),
+                                'max_rating' => request('max_rating'),
+                                'is_popular' => request('is_popular'),
+                            ];
+                            if ($category !== 'All') {
+                                $params['category'] = $category;
+                            }
                             $icons = [
                                 'All' => 'grid',
                                 'Beach' => 'umbrella-beach',
@@ -86,7 +117,9 @@
                         <a href="{{ route('destinations.index', array_filter($params)) }}"
                            class="whitespace-nowrap px-5 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2
                                   {{ $isActive ? 'bg-gradient-to-br from-blue-600 to-blue-800 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 shadow-sm' }}">
-                            <i class="fas fa-{{ $icons[$category] }} text-sm"></i>
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <use href="{{ asset('icons/sprite.svg#') . $icons[$category] }}"/>
+                            </svg>
                             {{ $category }}
                         </a>
                     @endforeach
@@ -112,30 +145,60 @@
                                 </svg>
                                 <p class="text-sm opacity-90">{{ $destination->location }}</p>
                             </div>
+                            @if ($destination->maps_url)
+                                <a href="{{ $destination->maps_url }}" target="_blank" class="text-sm text-yellow-400 hover:underline mt-1 flex items-center">
+                                    <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                    </svg>
+                                    View on Map
+                                </a>
+                            @endif
                         </div>
                         <span class="absolute top-4 right-4 bg-white/90 backdrop-blur text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                             {{ $destination->category }}
                         </span>
+                        @if ($destination->is_popular)
+                            <span class="absolute top-4 left-4 bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                                Popular
+                            </span>
+                        @endif
                     </div>
                     <div class="p-6 bg-white">
                         <p class="text-sm text-gray-600 line-clamp-2 mb-4">
                             {{ $destination->description }}
                         </p>
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center mb-4">
                             <div class="flex items-center text-yellow-400">
-                                @for ($i = 0; $i < 5; $i++)
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
-                                @endfor
-                                <span class="text-xs text-gray-500 ml-1">(24)</span>
+                                @if ($destination->rating)
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 {{ $i <= round($destination->rating) ? 'fill-current' : 'fill-current opacity-30' }}" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3 .921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784 .57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                    @endfor
+                                    <span class="text-xs text-gray-500 ml-1">({{ $destination->rating_count ?? 0 }})</span>
+                                @else
+                                    <span class="text-xs text-gray-500">No ratings yet</span>
+                                @endif
                             </div>
-                            <a href="#"
-                               class="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center group">
-                                Explore
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            @if ($destination->price)
+                                <span class="text-sm font-semibold text-gray-800">Rp{{ number_format($destination->price, 0, ',', '.') }}</span>
+                            @endif
+                        </div>
+                        <div class="flex flex-wrap gap-4 mt-6">
+                            <a href="{{ route('destinations.show', $destination->id) }}"
+                               class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold text-sm rounded-2xl shadow-lg transition-all duration-300 group">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                 </svg>
+                                <span>Show Details</span>
+                            </a>
+                            <a href="{{ route('destinations.book', ['destination' => $destination->id]) }}"
+                               class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-900 font-semibold text-sm rounded-2xl shadow-lg transition-all duration-300 group"
+                               aria-label="Book {{ $destination->name }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span>Book Now</span>
                             </a>
                         </div>
                     </div>
@@ -197,10 +260,7 @@
                             </a>
                         @endif
 
-                        @foreach ($destinations->getUrlRange(
-                            max(1, $current - 2),
-                            min($last, $current + 2)
-                        ) as $page => $url)
+                        @foreach ($destinations->getUrlRange(max(1, $current - 2), min($last, $current + 2)) as $page => $url)
                             @if ($page == $current)
                                 <a href="{{ $url . $query }}" aria-current="page"
                                    class="z-10 bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
@@ -245,14 +305,14 @@
         @endif
     </main>
 
-        <script>
-            // Simple parallax effect for hero section
-            document.addEventListener('scroll', function() {
-                const scrollPosition = window.pageYOffset;
-                const parallaxBg = document.querySelector('.parallax-bg');
-                if (parallaxBg) {
-                    parallaxBg.style.transform = `translateY(${scrollPosition * 0.3}px)`;
-                }
-            });
-        </script>
+    <script>
+        // Simple parallax effect for hero section
+        document.addEventListener('scroll', function() {
+            const scrollPosition = window.pageYOffset;
+            const parallaxBg = document.querySelector('.parallax-bg');
+            if (parallaxBg) {
+                parallaxBg.style.transform = `translateY(${scrollPosition * 0.3}px)`;
+            }
+        });
+    </script>
 @endsection

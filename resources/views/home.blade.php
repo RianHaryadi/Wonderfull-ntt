@@ -52,55 +52,83 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($destinations as $destination)
-                <div class="group relative overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
-                    <div class="relative h-72 overflow-hidden">
-                        <img src="{{ $destination->image ? asset('storage/destinations/' . preg_replace('#^/?destinations/|^/|/#', '', $destination->image)) : asset('images/fallback.jpg') }}"
-                             alt="{{ $destination->name }}"
-                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                             loading="lazy">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-                        
-                        <div class="absolute bottom-0 left-0 p-6 text-white z-20">
-                            <h3 class="text-2xl font-bold">{{ $destination->name }}</h3>
-                            <p class="text-sm opacity-90 flex items-center">
-                                <i class="fas fa-map-marker-alt mr-2"></i> {{ $destination->location }}
-                            </p>
+                <div class="group flex flex-col justify-between relative overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+                    {{-- Bagian Atas Kartu (Gambar & Info Awal) --}}
+                    <div>
+                        <div class="relative h-72 overflow-hidden">
+                            <img src="{{ $destination->image ? asset('storage/' . $destination->image) : asset('images/fallback.jpg') }}"
+                                 alt="{{ $destination->name }}"
+                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                 loading="lazy">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                            
+                            <div class="absolute bottom-0 left-0 p-6 text-white z-20">
+                                <h3 class="text-2xl font-bold">{{ $destination->name }}</h3>
+                                <p class="text-sm opacity-90 flex items-center">
+                                    <i class="fas fa-map-marker-alt mr-2"></i> {{ $destination->location }}
+                                </p>
+                            </div>
+                            
+                            <span class="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg z-20">
+                                {{ $destination->category }}
+                            </span>
+
+                            @if($destination->is_popular)
+                                <span class="absolute top-4 left-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg z-20 flex items-center">
+                                    <i class="fas fa-fire mr-1.5"></i> Popular
+                                </span>
+                            @endif
+                            
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
+                                <a href="{{ route('destinations.show', $destination) }}" class="bg-white text-blue-600 px-6 py-3 rounded-full font-bold hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105">
+                                    Explore Now <i class="fas fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
                         </div>
                         
-                        <span class="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg z-20">
-                            {{ $destination->category }}
-                        </span>
-                        
-                        <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
-                            <a href="#" class="bg-white text-blue-600 px-6 py-3 rounded-full font-bold hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105">
-                                Explore Now <i class="fas fa-arrow-right ml-2"></i>
-                            </a>
+                        <div class="bg-white p-6">
+                            <p class="text-gray-600 mb-4 leading-relaxed h-14">
+                                {{ \Illuminate\Support\Str::limit($destination->description, 120) }}
+                            </p>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                <div class="flex items-center">
+                                    <div class="flex text-yellow-400">
+                                        @php
+                                            $rating = $destination->rating ?? 0;
+                                            $fullStars = floor($rating);
+                                            $halfStar = ($rating - $fullStars) >= 0.5;
+                                            $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+                                        @endphp
+                                        @for ($i = 0; $i < $fullStars; $i++) <i class="fas fa-star"></i> @endfor
+                                        @if ($halfStar) <i class="fas fa-star-half-alt"></i> @endif
+                                        @for ($i = 0; $i < $emptyStars; $i++) <i class="far fa-star"></i> @endfor
+                                    </div>
+                                    @if($destination->rating_count > 0)
+                                        <span class="text-gray-500 ml-2 text-sm">
+                                            {{ number_format($destination->rating, 1) }} ({{ $destination->rating_count >= 1000 ? number_format($destination->rating_count / 1000, 1) . 'k' : $destination->rating_count }})
+                                        </span>
+                                    @endif
+                                </div>
+                                <span class="text-blue-600 font-bold text-lg">
+                                    IDR {{ number_format($destination->price, 0, ',', '.') }}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="bg-white p-6">
-                        <p class="text-gray-600 mb-4 leading-relaxed">
-                            {{ \Illuminate\Support\Str::limit($destination->description, 120) }}
-                        </p>
-                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
-                            <div class="flex items-center">
-                                <div class="flex text-yellow-400">
-                                    @for($i = 0; $i < 5; $i++)
-                                        <i class="fas fa-star{{ $i < 4 ? '' : '-half-alt' }}"></i>
-                                    @endfor
-                                </div>
-                                <span class="text-gray-500 ml-2 text-sm">4.7 (1.2k)</span>
-                            </div>
-                            <span class="text-blue-600 font-bold">IDR 500K</span>
-                        </div>
+
+                    <div class="bg-white px-6 pb-6 pt-2">
+                        <a href="{{ route('destinations.show', $destination) }}" 
+                           class="block w-full text-center bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                            Book Now
+                        </a>
                     </div>
                 </div>
             @empty
-                <div class="col-span-3 text-center py-12">
-                    <div class="inline-block p-6 bg-white rounded-xl shadow-lg">
-                        <i class="fas fa-map-marked-alt text-4xl text-gray-400 mb-4"></i>
+                <div class="col-span-full text-center py-12">
+                    <div class="inline-block p-8 bg-white rounded-2xl shadow-lg">
+                        <i class="fas fa-map-marked-alt text-5xl text-gray-400 mb-4"></i>
                         <p class="text-gray-600 text-lg">
-                            No popular destinations available at the moment.
+                            Belum ada destinasi populer yang tersedia saat ini.
                         </p>
                     </div>
                 </div>
@@ -110,7 +138,7 @@
         <div class="mt-16 text-center">
             <a href="{{ route('destinations.index') }}"
                class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-lg font-semibold">
-                View All Destinations
+                Lihat Semua Destinasi
                 <svg class="ml-3 w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                 </svg>
@@ -122,7 +150,6 @@
 <!-- Luxury Stays Carousel -->
 <section id="luxury-stays" class="py-20 bg-gradient-to-b from-white to-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Section Header -->
         <div class="mb-16">
             <div class="flex flex-col gap-6 text-center">
                 <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">
@@ -136,204 +163,177 @@
         </div>
     </div>
 
-        <!-- Swiper Container -->
-        <div class="relative px-12">
-            <div class="swiper luxuryHotelSwiper">
-                <div class="swiper-wrapper pb-12">
-                    @forelse($hotels as $hotel)
-                    <div class="swiper-slide h-full">
+    <div class="relative px-12">
+        <div class="swiper luxuryHotelSwiper">
+            <div class="swiper-wrapper pb-12">
+                @forelse($hotels as $hotel)
+                    <div class="swiper-slide h-full flex">
                         <div class="bg-white h-full rounded-3xl shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-[1.02] flex flex-col justify-between group">
-                            <!-- Hotel Image -->
                             <div class="relative overflow-hidden">
                                 <img src="{{ $hotel->image ? asset('storage/' . $hotel->image) : asset('images/hotel-fallback.jpg') }}"
                                      alt="{{ $hotel->name }}"
                                      class="w-full h-56 object-cover group-hover:scale-110 transition duration-500 ease-in-out"
                                      loading="lazy">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                                <!-- Premium Badge -->
                                 <div class="absolute top-4 left-4 bg-yellow-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center">
                                     <i class="fas fa-crown mr-1"></i> PREMIUM
                                 </div>
                             </div>
 
-                            <!-- Hotel Details -->
                             <div class="p-6 flex flex-col justify-between flex-1">
-                                <h3 class="text-xl font-bold text-gray-800 truncate">{{ $hotel->name }}</h3>
-                                
-                                <!-- Star Rating -->
-                                <div class="flex items-center text-yellow-500 text-sm mt-1">
-                                    @for($i = 0; $i < 5; $i++)
-                                        <i class="fas fa-star {{ $i < 4 ? 'text-yellow-400' : 'text-gray-300' }}"></i>
-                                    @endfor
-                                    <span class="ml-2 text-gray-500">({{ rand(150, 500) }} reviews)</span>
-                                </div>
-
-                                <!-- Location -->
-                                <p class="text-gray-500 text-sm mt-2 flex items-center">
-                                    <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>
-                                    {{ $hotel->location ?? 'East Nusa Tenggara' }}
-                                </p>
-
-                                <!-- Price -->
-                                <div class="mt-3 text-blue-600 text-lg font-semibold">
-                                    IDR {{ number_format($hotel->single_room_price, 0, ',', '.') }}
-                                    <span class="text-sm font-normal text-gray-500">/night</span>
-                                </div>
-
-                                <!-- Facilities -->
-                                @php
-                                    $facilities = is_array($hotel->facilities) ? $hotel->facilities : explode(',', $hotel->facilities);
-                                    $highlightedFacilities = array_slice($facilities, 0, 3);
-                                @endphp
-                                @if(!empty($facilities))
-                                    <div class="flex flex-wrap gap-2 mt-4 text-sm">
-                                        @foreach($highlightedFacilities as $facility)
-                                            @php $f = strtolower(trim($facility)); @endphp
-                                            <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
-                                                @if(str_contains($f, 'wifi'))
-                                                    <i class="fas fa-wifi"></i>
-                                                @elseif(str_contains($f, 'pool'))
-                                                    <i class="fas fa-swimming-pool"></i>
-                                                @elseif(str_contains($f, 'spa'))
-                                                    <i class="fas fa-spa"></i>
-                                                @else
-                                                    <i class="fas fa-check-circle text-gray-400"></i>
-                                                @endif
-                                                {{ ucwords(trim($facility)) }}
-                                            </div>
-                                        @endforeach
-                                        @if(count($facilities) > 3)
-                                            <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-gray-600 border border-gray-200">
-                                                +{{ count($facilities) - 3 }} more
-                                            </div>
-                                        @endif
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 truncate">{{ $hotel->name }}</h3>
+                                    
+                                    <div class="flex items-center text-yellow-500 text-sm mt-1">
+                                        @for($i = 0; $i < 5; $i++)
+                                            <i class="fas fa-star {{ $i < floor($hotel->rating ?? 0) ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                        @endfor
+                                        <span class="ml-2 text-gray-500">({{ $hotel->rating_count ?? rand(150, 500) }} reviews)</span>
                                     </div>
-                                @endif
 
-                                <!-- Action Buttons -->
-                                <div class="mt-6 flex gap-2">
+                                    <p class="text-gray-500 text-sm mt-2 flex items-center">
+                                        <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>
+                                        {{ $hotel->location ?? 'East Nusa Tenggara' }}
+                                    </p>
+
+                                    <div class="mt-3 text-blue-600 text-lg font-semibold">
+                                        IDR {{ number_format($hotel->price_per_night ?? $hotel->single_room_price ?? 0, 0, ',', '.') }}
+                                        <span class="text-sm font-normal text-gray-500">/night</span>
+                                    </div>
+
+                                    @php
+                                        $facilities = [];
+                                        if (!empty($hotel->facilities)) {
+                                            $facilities = is_array($hotel->facilities) ? $hotel->facilities : explode(',', $hotel->facilities);
+                                        }
+                                        $highlightedFacilities = array_slice($facilities, 0, 3);
+                                    @endphp
+                                    @if(!empty($facilities))
+                                        <div class="flex flex-wrap gap-2 mt-4 text-sm">
+                                            @foreach($highlightedFacilities as $facility)
+                                                @php $f = strtolower(trim($facility)); @endphp
+                                                <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+                                                    @if(str_contains($f, 'wifi')) <i class="fas fa-wifi"></i>
+                                                    @elseif(str_contains($f, 'pool')) <i class="fas fa-swimming-pool"></i>
+                                                    @elseif(str_contains($f, 'spa')) <i class="fas fa-spa"></i>
+                                                    @elseif(str_contains($f, 'restaurant')) <i class="fas fa-utensils"></i>
+                                                    @else <i class="fas fa-check-circle text-gray-400"></i>
+                                                    @endif
+                                                    <span>{{ ucwords(trim($facility)) }}</span>
+                                                </div>
+                                            @endforeach
+                                            @if(count($facilities) > 3)
+                                                <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-gray-600 border border-gray-200">
+                                                    +{{ count($facilities) - 3 }} more
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="mt-6 flex gap-3">
                                     <a href="{{ route('hotels.show', $hotel->id) }}" 
-                                       class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium shadow">
+                                       class="flex-1 text-center bg-white border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition text-sm font-semibold shadow-sm">
                                         View Details
                                     </a>
                                     <a href="{{ route('hotels.book', $hotel->id) }}" 
-                                       class="flex-1 text-center bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 transition font-semibold">
+                                       class="flex-1 text-center bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold shadow-md">
                                         Book Now
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    @empty
+                @empty
                     <div class="swiper-slide text-center text-gray-600 text-lg py-10">
                         No hotels available at the moment.
                     </div>
-                    @endforelse
-                </div>
-                
-                <!-- Custom Pagination -->
-                <div class="swiper-pagination !relative !mt-10"></div>
+                @endforelse
             </div>
             
-            <!-- Custom Navigation Buttons -->
-            <div class="swiper-button-prev luxury-hotel-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-50 transition">
-                <i class="fas fa-chevron-left text-blue-600"></i>
-            </div>
-            <div class="swiper-button-next luxury-hotel-next absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-50 transition">
-                <i class="fas fa-chevron-right text-blue-600"></i>
-            </div>
+            <div class="swiper-pagination !relative !mt-10"></div>
         </div>
         
-        <!-- View All Button -->
-        <div class="mt-16 text-center">
-            <a href="{{ route('hotels.index') }}" class="inline-flex items-center px-8 py-4 text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg text-lg font-semibold">
-                View All Hotels
-                <svg class="ml-3 w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                </svg>
-            </a>
+        <div class="swiper-button-prev luxury-hotel-prev absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-50 transition cursor-pointer">
+            <i class="fas fa-chevron-left text-blue-600"></i>
+        </div>
+        <div class="swiper-button-next luxury-hotel-next absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-50 transition cursor-pointer">
+            <i class="fas fa-chevron-right text-blue-600"></i>
         </div>
     </div>
+    
+    <div class="mt-16 text-center">
+        <a href="{{ route('hotels.index') }}" class="inline-flex items-center px-8 py-4 text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg text-lg font-semibold">
+            View All Hotels
+            <svg class="ml-3 w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+        </a>
+    </div>
+</div>
 </section>
 
-<!-- Enhanced Tour Packages Section -->
-<section id="tour-packages" class="py-20 bg-gradient-to-b from-gray-50 to-white">
+<!-- Tour Packages Section -->
+<section id="tour-packages" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
             <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
-                <span class="block">Curated <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-600">Tour Packages</span></span>
+                <span class="block">Exclusive <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-600">Tour Packages</span></span>
             </h2>
             <div class="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-500 mx-auto rounded-full"></div>
             <p class="mt-6 max-w-3xl mx-auto text-gray-600 text-xl">
-                Handpicked tour packages to explore the stunning beauty of East Nusa Tenggara.
+                Choose from a variety of curated travel experiences to explore the wonders of East Nusa Tenggara.
             </p>
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @forelse($TourPackage as $paket)
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl group">
-                    <div class="relative h-56 overflow-hidden">
-                        <img src="{{ $paket->thumbnail ? asset('storage/' . $paket->thumbnail) : asset('images/tour-fallback.jpg') }}"
+            @forelse($TourPackage as $package)
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transition hover:-translate-y-1 hover:shadow-2xl group">
+                    <div class="relative h-60 overflow-hidden">
+                          <img src="{{ $package->thumbnail ? asset('storage/' . $package->thumbnail) : asset('image/tour-fallback.jpg') }}"
+                             alt="{{ $package->name }}"
                              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                             alt="{{ $paket->name }}"
                              loading="lazy">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                        <div class="absolute top-4 right-4 bg-white/90 text-blue-600 text-xs font-bold px-3 py-1 rounded-full shadow">
-                            {{ ucfirst($paket->category) }}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
+                        <div class="absolute top-4 left-4 bg-yellow-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                            {{ ucfirst($package->type) }}
                         </div>
                     </div>
-                    
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $paket->name }}</h3>
-                        <p class="text-sm text-gray-500 mb-3 flex items-center">
-                            <i class="fas fa-map-marker-alt mr-2"></i> {{ $paket->location }}
+                        <h3 class="text-xl font-bold text-gray-900 mb-2 truncate">{{ $package->name }}</h3>
+                        <p class="text-gray-600 mb-4">
+                            {{ \Illuminate\Support\Str::limit($package->description, 100) }}
                         </p>
-                        
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-blue-600 font-bold text-lg">
-                                IDR {{ number_format($paket->price, 0, ',', '.') }}
-                            </span>
-                            <span class="text-sm bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
-                                {{ $paket->days ?? '3' }} Days
-                            </span>
+                        <div class="flex justify-between items-center text-sm text-gray-500">
+                            <span><i class="fas fa-map-marker-alt mr-1 text-blue-500"></i>{{ $package->location }}</span>
+                            <span class="text-blue-600 font-bold">IDR {{ number_format($package->price, 0, ',', '.') }}</span>
                         </div>
-                        
-                        @php
-                            $hasHotel = $paket->variants->contains(fn($v) => $v->includes_hotel);
-                        @endphp
-                        
-                        <div class="flex items-center justify-between text-sm mb-5">
-                            <span class="{{ $hasHotel ? 'text-green-600' : 'text-red-600' }}">
-                                <i class="fas {{ $hasHotel ? 'fa-check-circle' : 'fa-times-circle' }} mr-1"></i>
-                                Hotel {{ $hasHotel ? 'Included' : 'Not Included' }}
-                            </span>
-                            <span class="text-gray-500">
-                                <i class="fas fa-users mr-1"></i> Max {{ $paket->max_participants ?? 10 }} people
-                            </span>
-                        </div>
-                        
-                        <a href="{{ route('paket-tours.show', $paket->id) }}"
-                           class="block w-full text-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-[1.02]">
-                            View Details <i class="fas fa-arrow-right ml-2"></i>
+                        <div class="mt-4 flex gap-2">
+                        <a href="{{ route('paket-tours.show', $package->id) }}"
+                        class="flex-1 text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition font-semibold text-sm">
+                            View Details
                         </a>
+                        <a href="{{ route('paket-tours.show', $package->id) }}#booking"
+                        class="flex-1 text-center bg-white text-blue-600 border border-blue-600 py-2 rounded-md hover:bg-blue-50 transition font-semibold text-sm">
+                            Book Now
+                        </a>
+                    </div>
                     </div>
                 </div>
             @empty
                 <div class="col-span-3 text-center py-12">
                     <div class="inline-block p-6 bg-white rounded-xl shadow-lg">
                         <i class="fas fa-suitcase-rolling text-4xl text-gray-400 mb-4"></i>
-                        <p class="text-gray-600 text-lg">
-                            No tour packages available at the moment.
-                        </p>
+                        <p class="text-gray-600 text-lg">No tour packages available at the moment.</p>
                     </div>
                 </div>
             @endforelse
         </div>
-        
+
         <div class="mt-16 text-center">
             <a href="{{ route('paket-tours.index') }}"
                class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-lg font-semibold">
-                Explore All Tour Packages
+                View All Tour Packages
                 <svg class="ml-3 w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
                 </svg>
@@ -341,6 +341,7 @@
         </div>
     </div>
 </section>
+
 
 <!-- Enhanced Culture Section -->
 <section id="culture" class="py-20 bg-gradient-to-b from-white to-gray-50">
@@ -502,24 +503,20 @@
     }
     
     /* Custom Swiper Styles for Luxury Hotel */
-    .luxuryHotelSwiper .swiper-pagination-bullet {
-        width: 10px;
-        height: 10px;
-        background: #E5E7EB;
-        opacity: 1;
-        transition: all 0.3s ease;
+   .luxuryHotelSwiper .swiper-wrapper {
+        /* 1. Memaksa wrapper untuk meregangkan semua slide di dalamnya */
+        align-items: stretch;
     }
-    
-    .luxuryHotelSwiper .swiper-pagination-bullet-active {
-        background: #1E40AF;
-        width: 30px;
-        border-radius: 5px;
+
+    .luxuryHotelSwiper .swiper-slide {
+        /* 2. Mengatur tinggi slide agar otomatis mengikuti wrapper */
+        height: auto;
+        display: flex; /* 3. Membuat slide menjadi flex container */
     }
-    
-    .luxury-hotel-prev, .luxury-hotel-next {
-        opacity: 0;
-        transform: scale(0.8);
-        transition: all 0.3s ease;
+
+    .luxuryHotelSwiper .swiper-slide > div {
+        /* 4. Memastikan kartu di dalam slide mengisi 100% tinggi yang tersedia */
+        width: 100%;
     }
     
     #luxury-stays:hover .luxury-hotel-prev,

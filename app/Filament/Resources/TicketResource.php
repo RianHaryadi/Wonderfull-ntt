@@ -95,6 +95,24 @@ class TicketResource extends Resource
             ]);
     }
 
+    public static function getNavigationBadge(): ?string
+{
+    return (string) static::getModel()::count();
+}
+
+public static function getNavigationBadgeColor(): string | array | null
+{
+    $count = static::getModel()::count();
+
+    return match (true) {
+        $count === 0        => 'gray',
+        $count < 5          => 'warning',
+        $count < 20         => 'success',
+        default             => 'primary',
+    };
+}
+
+
     public static function getPages(): array
     {
         return [

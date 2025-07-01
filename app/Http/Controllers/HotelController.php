@@ -29,4 +29,12 @@ class HotelController extends Controller
             'selectedLocation' => $request->location
         ]);
     }
+
+    public function show($id)
+    {
+        $hotel = Hotel::findOrFail($id);
+        return view('hotel.show', compact('hotel'));
+    }
+
+    
 }

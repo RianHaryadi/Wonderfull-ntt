@@ -15,25 +15,30 @@ class Destination extends Model
         'location',
         'image',
         'category',
-        'is_popular', // tambah ini
+        'is_popular',
+        'rating',         
+        'rating_count',   
+        'latitude',       
+        'longitude',      
+        'maps_url',       
+        'price',          
     ];
 
     protected $casts = [
-        'is_popular' => 'boolean', // supaya otomatis boolean
+        'is_popular' => 'boolean',
+        'rating' => 'float',
+        'rating_count' => 'integer',
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
-
 
     public function hotels()
     {
         return $this->belongsToMany(Hotel::class, 'destination_hotel');
     }
 
-
     public function tourPackages()
     {
         return $this->belongsToMany(TourPackage::class, 'destination_tour_package');
     }
-
-    
 }
-

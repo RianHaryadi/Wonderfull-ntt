@@ -40,6 +40,17 @@ class CodePromotion extends Model
         return $this->hasMany(Transaction::class, 'promo_code_id');
     }
 
+    public function destinasi()
+    {
+        return $this->belongsToMany(Destination::class, 'destination_promo', 'promo_code_id', 'destination_id');
+    }
+    
+    public function scopeActive($query)
+    {
+        return $query->where('active', true);
+    }
+
+
     /**
      * Mengecek apakah kode promo masih aktif dan valid saat ini
      */

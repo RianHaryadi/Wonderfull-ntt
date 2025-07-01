@@ -9,6 +9,7 @@ use App\Http\Controllers\PaketTourController;
 use App\Http\Controllers\CultureController;
 use App\Http\Controllers\HotelBookingController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\TransactionController;
 
 // Halaman Utama dan Autentikasi
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -17,6 +18,9 @@ Route::get('/login', LoginForm::class)->name('login');
 // Destinasi Wisata
 Route::get('/destinations', [DestinationController::class, 'index'])->name('destinations.index');
 Route::get('/destinations/{id}', [DestinationController::class, 'show'])->name('destinations.show');
+Route::get('/destinations/{destination}/book', [DestinationController::class, 'book'])->name('destinations.book');
+Route::post('/destinations/store', [DestinationController::class, 'store'])->name('destinations.store');
+Route::get('/transactions/{booking_code}/payment', [TransactionController::class, 'payment'])->name('transaction.payment');
 
 // Hotel
 Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
@@ -36,7 +40,14 @@ Route::get('/booking/{booking_number}', [BookingController::class, 'show'])->nam
 // Paket Tour
 Route::get('/paket-tours', [PaketTourController::class, 'index'])->name('paket-tours.index');
 Route::get('/paket-tours/{id}', [PaketTourController::class, 'show'])->name('paket-tours.show');
-Route::put('/tourpackage/{id}/update-hotel', [PaketTourController::class, 'updateHotel'])->name('tourpackage.update.hotel');
+Route::get('/paket-tour/create/{tourPackage}', [PaketTourController::class, 'create'])->name('paket-tour.create');
+Route::post('/paket-tour/store', [PaketTourController::class, 'store'])->name('paket-tour.store');
 
 // Budaya
 Route::get('/cultures', [CultureController::class, 'index'])->name('cultures.index');
+
+// route transaksi
+Route::get('/transactions/{booking_code}/payment', [TransactionController::class, 'payment'])->name('transaction.payment');
+Route::post('/transactions/{transaction}/pay', [TransactionController::class, 'confirmPayment'])->name('transactions.pay');
+Route::get('/transactions/{booking_code}/success', [TransactionController::class, 'success'])->name('transactions.success');
+Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');

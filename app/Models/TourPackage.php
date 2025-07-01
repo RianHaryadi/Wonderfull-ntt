@@ -20,16 +20,21 @@ class TourPackage extends Model
         'category',
         'photos',
         'description',
+        'rating',
+        'rating_count',
     ];
 
-    // Cast kolom photos sebagai array
     protected $casts = [
         'photos' => 'array',
         'includes_hotel' => 'boolean',
     ];
 
+    // =======================
+    // RELATIONS
+    // =======================
+
     /**
-     * Relasi ke tabel transactions (satu paket bisa punya banyak transaksi)
+     * Satu paket tur bisa memiliki banyak transaksi
      */
     public function transactions()
     {
@@ -37,15 +42,15 @@ class TourPackage extends Model
     }
 
     /**
-     * Relasi ke satu destinasi utama (jika destination_id digunakan)
+     * Relasi ke satu destinasi utama (via foreign key destination_id)
      */
     public function destination()
     {
-        return $this->belongsTo(Destination::class);
+        return $this->belongsTo(Destination::class, 'destination_id');
     }
 
     /**
-     * Relasi ke banyak destinasi (jika ada tabel pivot destination_tour_package)
+     * Jika paket tur terhubung dengan banyak destinasi (pivot table: destination_tour_package)
      */
     public function destinations()
     {
@@ -53,7 +58,7 @@ class TourPackage extends Model
     }
 
     /**
-     * Relasi ke banyak hotel (melalui tabel pivot tour_package_hotel)
+     * Jika paket tur memiliki banyak hotel terkait (pivot table: tour_package_hotel)
      */
     public function hotels()
     {
@@ -61,23 +66,19 @@ class TourPackage extends Model
     }
 
     /**
-     * Relasi ke satu hotel (jika hanya ada satu hotel utama)
+     * Jika kamu aktifkan varian paket tur (tur tidak bundling)
      */
-    // public function hotel()
+    // public function variants()
     // {
-    //     return $this->belongsTo(Hotel::class);
+    //     return $this->hasMany(TourPackageVariant::class);
     // }
 
-    /**
-     * Relasi ke banyak varian tur dalam satu paket
-     */
-    public function variants()
-    {
-        return $this->hasMany(TourPackageVariant::class);
-    }
+    // =======================
+    // ACCESSORS
+    // =======================
 
     /**
-     * Akses ke properti photos (jika disimpan sebagai array di kolom JSON)
+     * Mengakses full URL dari semua foto
      */
     public function getPhotoUrlsAttribute()
     {
@@ -86,6 +87,13 @@ class TourPackage extends Model
         });
     }
 
+    // =======================
+    // CUSTOM QUERY
+    // =======================
+
+    /**
+     * Mendapatkan hotel terdekat berdasarkan lokasi (untuk rekomendasi)
+     */
     public function nearbyHotels()
     {
         return Hotel::where('location', 'LIKE', '%' . $this->location . '%')->get();
