@@ -4,19 +4,82 @@ namespace App\Http\Controllers;
 
 use App\Models\Destination;
 use App\Models\Transaction;
-use App\Models\CodePromotion; // ✅ Tambahkan model promo
+use App\Models\CodePromotion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class DestinationController extends Controller
 {
     /**
-     * Menampilkan daftar semua destinasi.
+     * Menampilkan daftar semua destinasi dengan filter.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $destinations = Destination::latest()->paginate(12);
-        return view('destinations.index', compact('destinations'));
+        // Define valid categories
+        $validCategories = [
+            'Beach' => 'Beach',
+            'Mountain' => 'Mountain',
+            'Culture' => 'Culture',
+            'Nature' => 'Nature',
+        ];
+
+        // Start with a query builder instance
+        $query = Destination::query();
+
+        // Apply category filter
+        if ($request->has('category') && array_key_exists($request->category, $validCategories)) {
+            $query->where('category', $validCategories[$request->category]);
+        }
+
+        // Apply search filter
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Apply price filters
+        if ($request->has('min_price') && is_numeric($request->min_price)) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && is_numeric($request->max_price)) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Apply rating filters
+        if ($request->has('min_rating') && is_numeric($request->min_rating)) {
+            $query->where('rating', '>=', $request->min_rating);
+        }
+
+        if ($request->has('max_rating') && is_numeric($request->max_rating)) {
+            $query->where('rating', '<=', $request->max_rating);
+        }
+
+        // Apply popular filter
+        if ($request->has('is_popular') && $request->is_popular) {
+            $query->where('is_popular', true);
+        }
+
+        // Order by latest and paginate
+        $destinations = $query->latest()->paginate(12);
+
+        // Append query parameters to pagination links
+        $destinations->appends($request->only([
+            'category',
+            'search',
+            'min_price',
+            'max_price',
+            'min_rating',
+            'max_rating',
+            'is_popular'
+        ]));
+
+        // Pass categories to the view
+        $categories = ['All', ...array_keys($validCategories)];
+
+        return view('destinations.index', compact('destinations', 'categories'));
     }
 
     /**
@@ -35,7 +98,7 @@ class DestinationController extends Controller
     {
         $destination = Destination::findOrFail($id);
 
-        // ✅ Ambil promo yang aktif dan dalam rentang tanggal berlaku
+        // Ambil promo yang aktif dan dalam rentang tanggal berlaku
         $promos = CodePromotion::where('active', true)
             ->whereDate('valid_from', '<=', now())
             ->whereDate('valid_until', '>=', now())
@@ -49,7 +112,7 @@ class DestinationController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validasi input
+        // Validasi input
         $request->validate([
             'destination_id'     => 'required|exists:destinations,id',
             'customer_name'      => 'required|string|max:255',
@@ -63,12 +126,12 @@ class DestinationController extends Controller
 
         $destination = Destination::findOrFail($request->destination_id);
 
-        // 2. Hitung total harga
+        // Hitung total harga
         $subtotal = $destination->price * $request->number_of_tickets;
         $discount = $request->discount_amount ?? 0;
         $totalPrice = max($subtotal - $discount, 0);
 
-        // 3. Buat transaksi
+        // Buat transaksi
         $transaction = Transaction::create([
             'booking_code'       => 'DST-' . strtoupper(Str::random(10)),
             'customer_name'      => $request->customer_name,
@@ -82,10 +145,10 @@ class DestinationController extends Controller
             'discount'           => $discount,
             'total_price'        => $totalPrice,
             'status'             => Transaction::STATUS_PENDING,
-            'promo_code_id'      => $request->promo_code_id, // ✅ simpan jika ada
+            'promo_code_id'      => $request->promo_code_id,
         ]);
 
-        // 4. Redirect ke halaman pembayaran
+        // Redirect ke halaman pembayaran
         return redirect()->route('transaction.payment', $transaction->booking_code)
                          ->with('success', 'Pemesanan berhasil dibuat! Silakan lanjutkan pembayaran.');
     }

@@ -68,7 +68,16 @@ class CodePromotionResource extends Resource
                 TextColumn::make('discount_percent')->suffix('%'),
                 TextColumn::make('valid_from')->date(),
                 TextColumn::make('valid_until')->date(),
-                IconColumn::make('active')->boolean()->label('Active'),
+
+                // --- UPDATED COLUMN ---
+                // Menggunakan accessor 'is_currently_valid' untuk status yang akurat secara real-time
+                IconColumn::make('is_currently_valid')
+                    ->label('Status')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -77,33 +86,36 @@ class CodePromotionResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-        }
-        public static function getNavigationBadge(): ?string
+    }
+    
+    public static function getNavigationBadge(): ?string
     {
-        return (string) CodePromotion::count();
+        // --- UPDATED BADGE LOGIC ---
+        // Menghitung hanya promosi yang benar-benar valid saat ini
+        return (string) static::getModel()::currentlyValid()->count();
     }
 
     public static function getNavigationBadgeColor(): string | array | null
     {
-        $count = CodePromotion::count();
+        // --- UPDATED BADGE COLOR LOGIC ---
+        // Warna badge sekarang didasarkan pada jumlah promosi yang valid
+        $count = static::getModel()::currentlyValid()->count();
 
         if ($count == 0) {
             return 'gray';
         } elseif ($count < 5) {
             return 'warning';
-        } elseif ($count < 20) {
-            return 'success';
         } else {
             return 'success';
         }
     }
     
-        public static function getPages(): array
-        {
-            return [
-                'index' => ListCodePromotion::route('/'),
-                'create' => CreateCodePromotion::route('/create'),
-                'edit' => EditCodePromotion::route('/{record}/edit'),
-            ];
-        }
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListCodePromotion::route('/'),
+            'create' => CreateCodePromotion::route('/create'),
+            'edit' => EditCodePromotion::route('/{record}/edit'),
+        ];
     }
+}

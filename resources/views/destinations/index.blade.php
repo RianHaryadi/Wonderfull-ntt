@@ -1,4 +1,4 @@
-@extends('layouts.app')
+]@extends('layouts.app')
 
 @section('title', 'Destinations')
 
@@ -26,11 +26,10 @@
                            class="flex-grow sm:flex-grow-0 outline-none bg-transparent text-white placeholder-gray-300 w-full sm:w-64"
                            value="{{ request('search') }}">
                 </div>
-                    <button type="submit"
-                            class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 px-6 py-2 rounded-lg hover:from-yellow-500 hover:to-yellow-600 transition-all font-medium shadow-lg">
-                        Search
-                    </button>
-                </div>
+                <button type="submit"
+                        class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 px-6 py-2 rounded-lg hover:from-yellow-500 hover:to-yellow-600 transition-all font-medium shadow-lg">
+                    Search
+                </button>
             </form>
         </div>
     </header>
@@ -52,7 +51,7 @@
         </div>
 
         @php
-            $currentCategory = request('category');
+            $currentCategory = request('category', 'All');
             $categories = ['All', 'Beach', 'Mountain', 'Culture', 'Nature'];
         @endphp
 
@@ -63,7 +62,7 @@
                     <h2 class="text-2xl font-bold text-gray-800">Find Your Perfect Destination</h2>
                     <p class="text-gray-600 mt-1">
                         {{ $destinations->total() }} amazing place{{ $destinations->total() > 1 ? 's' : '' }} found
-                        @if ($currentCategory)
+                        @if ($currentCategory && $currentCategory !== 'All')
                             in <span class="font-semibold text-blue-600">"{{ $currentCategory }}"</span>
                         @endif
                         @if (request('is_popular'))
@@ -94,18 +93,16 @@
                 <div class="flex flex-nowrap md:flex-wrap gap-3 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-gray-300">
                     @foreach ($categories as $category)
                         @php
-                            $isActive = ($category === 'All' && !$currentCategory) || ($category !== 'All' && $currentCategory === $category);
-                            $params = [
+                            $isActive = ($category === 'All' && !$currentCategory) || ($currentCategory === $category);
+                            $params = array_filter([
                                 'search' => request('search'),
                                 'min_price' => request('min_price'),
                                 'max_price' => request('max_price'),
                                 'min_rating' => request('min_rating'),
                                 'max_rating' => request('max_rating'),
                                 'is_popular' => request('is_popular'),
-                            ];
-                            if ($category !== 'All') {
-                                $params['category'] = $category;
-                            }
+                                'category' => $category !== 'All' ? $category : null,
+                            ]);
                             $icons = [
                                 'All' => 'grid',
                                 'Beach' => 'umbrella-beach',
@@ -114,12 +111,10 @@
                                 'Nature' => 'tree'
                             ];
                         @endphp
-                        <a href="{{ route('destinations.index', array_filter($params)) }}"
+                        <a href="{{ route('destinations.index', $params) }}"
                            class="whitespace-nowrap px-5 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2
                                   {{ $isActive ? 'bg-gradient-to-br from-blue-600 to-blue-800 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 shadow-sm' }}">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <use href="{{ asset('icons/sprite.svg#') . $icons[$category] }}"/>
-                            </svg>
+                            <i class="fas fa-{{ $icons[$category] }} w-4 h-4"></i>
                             {{ $category }}
                         </a>
                     @endforeach
@@ -134,16 +129,16 @@
                     <div class="relative h-72 overflow-hidden">
                         <img src="{{ $destination->image ? asset('storage/' . ltrim($destination->image, '/')) : asset('images/fallback.jpg') }}"
                              class="w-full h-full object-cover transition duration-700 group-hover:scale-110"
-                             alt="{{ $destination->name }}">
+                             alt="{{ $destination->name ?? 'Destination' }}">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
                         <div class="absolute bottom-0 left-0 p-6 text-white">
-                            <h3 class="text-xl font-bold">{{ $destination->name }}</h3>
+                            <h3 class="text-xl font-bold">{{ $destination->name ?? 'Unknown' }}</h3>
                             <div class="flex items-center mt-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                <p class="text-sm opacity-90">{{ $destination->location }}</p>
+                                <p class="text-sm opacity-90">{{ $destination->location ?? 'Unknown Location' }}</p>
                             </div>
                             @if ($destination->maps_url)
                                 <a href="{{ $destination->maps_url }}" target="_blank" class="text-sm text-yellow-400 hover:underline mt-1 flex items-center">
@@ -155,7 +150,7 @@
                             @endif
                         </div>
                         <span class="absolute top-4 right-4 bg-white/90 backdrop-blur text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                            {{ $destination->category }}
+                            {{ $destination->category ?? 'N/A' }}
                         </span>
                         @if ($destination->is_popular)
                             <span class="absolute top-4 left-4 bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
@@ -165,7 +160,7 @@
                     </div>
                     <div class="p-6 bg-white">
                         <p class="text-sm text-gray-600 line-clamp-2 mb-4">
-                            {{ $destination->description }}
+                            {{ $destination->description ?? 'No description available.' }}
                         </p>
                         <div class="flex justify-between items-center mb-4">
                             <div class="flex items-center text-yellow-400">
@@ -194,7 +189,7 @@
                             </a>
                             <a href="{{ route('destinations.book', ['destination' => $destination->id]) }}"
                                class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-900 font-semibold text-sm rounded-2xl shadow-lg transition-all duration-300 group"
-                               aria-label="Book {{ $destination->name }}">
+                               aria-label="Book {{ $destination->name ?? 'Destination' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
@@ -222,7 +217,7 @@
             @php
                 $current = $destinations->currentPage();
                 $last = $destinations->lastPage();
-                $queryString = http_build_query(request()->except('page'));
+                $queryString = http_build_query(array_filter(request()->except('page')));
                 $query = $queryString ? '&' . $queryString : '';
             @endphp
 

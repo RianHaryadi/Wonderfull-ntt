@@ -48,7 +48,6 @@
 <nav class="fixed top-0 w-full z-50 backdrop-blur-md bg-gradient-to-r from-blue-800 via-blue-600 to-yellow-400/80 shadow-lg border-b border-white/20 rounded-b-3xl transition-all duration-500">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
-
             <!-- Logo -->
             <div class="flex items-center">
                 <span class="text-3xl font-extrabold text-white drop-shadow-md tracking-wide">
@@ -84,7 +83,7 @@
             <!-- Mobile Toggle -->
             <div class="md:hidden">
                 <button id="menu-btn" class="text-white focus:outline-none" aria-label="Toggle navigation menu">
-                    <i class="fas fa-bars text-xl"></i>
+                    <i id="menu-icon" class="fas fa-bars text-xl"></i>
                 </button>
             </div>
         </div>
@@ -105,7 +104,7 @@
 </nav>
 
 <!-- Main Content -->
-<main class="pt-11 min-h-screen">
+<main class="pt-15 min-h-screen">
     @yield('content')
 </main>
 
@@ -152,10 +151,26 @@
 
         <!-- Bottom -->
         <div class="mt-12 border-t border-gray-700 pt-6 text-sm text-center text-gray-500">
-            &copy; {{ date('Y') }} <span class="text-white font-semibold">Wonderful NTT</span>. All rights reserved.
+            © {{ date('Y') }} <span class="text-white font-semibold">Wonderful NTT</span>. All rights reserved.
         </div>
     </div>
 </footer>
+
+<!-- JavaScript for Hamburger Menu Toggle -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+
+        menuBtn.addEventListener('click', function () {
+            mobileMenu.classList.toggle('hidden');
+            const isMenuOpen = !mobileMenu.classList.contains('hidden');
+            menuIcon.classList.toggle('fa-bars', !isMenuOpen);
+            menuIcon.classList.toggle('fa-times', isMenuOpen);
+        });
+    });
+</script>
 
 </body>
 </html>
