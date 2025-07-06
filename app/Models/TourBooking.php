@@ -20,7 +20,7 @@ class TourBooking extends Model
         'total_price',
         'status',
         'payment_method',
-        'booking_number',
+        'booking_number',   
     ];
 
     public function tourPackage()
@@ -37,4 +37,9 @@ class TourBooking extends Model
 {
     return $this->belongsTo(Transaction::class);
 }
+
+    public function destination()
+    {
+        return $this->belongsTo(Destination::class);
+    }
 }

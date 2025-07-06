@@ -144,38 +144,38 @@ class PaketTourController extends Controller
         $totalPrice = max($subtotal - $discount, 0);
 
         DB::transaction(function () use ($validated, $tourPackage, $destination, $bookingCode, $subtotal, $discount, $totalPrice, $promo) {
-            Transaction::create([
-                'booking_code'       => $bookingCode,
-                'tour_package_id'    => $tourPackage->id,
-                'destination_id'     => $destination->id,
-                'customer_name'      => $validated['customer_name'],
-                'customer_email'     => $validated['customer_email'],
-                'customer_phone'     => $validated['customer_phone'],
-                'booking_date'       => $validated['booking_date'],
-                'number_of_tickets'  => $validated['number_of_tickets'],
-                'package_price'      => $tourPackage->price,
-                'discount'           => $discount,
-                'total_price'        => $totalPrice,
-                'status'             => Transaction::STATUS_PENDING,
-                'payment_method'     => $validated['payment_method'] ?? 'pending',
-                'promo_code_id'      => $promo?->id,
-            ]);
+    Transaction::create([
+        'booking_code'       => $bookingCode,
+        'tour_package_id'    => $tourPackage->id,
+        'destination_id'     => $destination->id,
+        'customer_name'      => $validated['customer_name'],
+        'customer_email'     => $validated['customer_email'],
+        'customer_phone'     => $validated['customer_phone'],
+        'booking_date'       => $validated['booking_date'],
+        'number_of_tickets'  => $validated['number_of_tickets'],
+        'package_price'      => $tourPackage->price,
+        'discount'           => $discount,
+        'total_price'        => $totalPrice,
+        'status'             => Transaction::STATUS_PENDING,
+        'payment_method'     => $validated['payment_method'] ?? null, // Allow NULL instead of 'pending'
+        'promo_code_id'      => $promo?->id,
+    ]);
 
-            TourBooking::create([
-                'tour_package_id'    => $tourPackage->id,
-                'destination_id'     => $destination->id,
-                'hotel_id'           => $tourPackage->includes_hotel ? optional($tourPackage->hotels()->first())->id : null,
-                'customer_name'      => $validated['customer_name'],
-                'customer_email'     => $validated['customer_email'],
-                'customer_phone'     => $validated['customer_phone'],
-                'tour_price'         => $subtotal,
-                'hotel_price'        => 0,
-                'total_price'        => $totalPrice,
-                'status'             => 'pending',
-                'payment_method'     => $validated['payment_method'] ?? 'pending',
-                'booking_number'     => $bookingCode,
-            ]);
-        });
+    TourBooking::create([
+        'tour_package_id'    => $tourPackage->id,
+        'destination_id'     => $destination->id,
+        'hotel_id'           => $tourPackage->includes_hotel ? optional($tourPackage->hotels()->first())->id : null,
+        'customer_name'      => $validated['customer_name'],
+        'customer_email'     => $validated['customer_email'],
+        'customer_phone'     => $validated['customer_phone'],
+        'tour_price'         => $subtotal,
+        'hotel_price'        => 0,
+        'total_price'        => $totalPrice,
+        'status'             => 'pending',
+        'payment_method'     => $validated['payment_method'] ?? null, // Allow NULL instead of 'pending'
+        'booking_number'     => $bookingCode,
+    ]);
+});
 
         return redirect()->route('transaction.payment', $bookingCode)
                          ->with('success', 'Pemesanan berhasil! Silakan lanjutkan pembayaran.');

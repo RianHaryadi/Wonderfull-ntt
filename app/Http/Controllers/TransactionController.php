@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\TourBooking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
@@ -35,11 +37,26 @@ class TransactionController extends Controller
         // Konversi 'bank_transfer' ke 'transfer' agar cocok dengan enum
         $paymentMethod = $validated['payment_method'] === 'bank_transfer' ? 'transfer' : 'qris';
 
-        // Update transaksi
-        $transaction->update([
-            'payment_method' => $paymentMethod,
-            'status' => 'paid',
-        ]);
+        // Gunakan transaksi database untuk memastikan konsistensi
+        DB::transaction(function () use ($transaction, $paymentMethod) {
+            // Update transaksi
+            $transaction->update([
+                'payment_method' => $paymentMethod,
+                'status' => 'paid',
+            ]);
+
+            // Update status booking di tabel tour_bookings
+            $booking = TourBooking::where('booking_number', $transaction->booking_code)->first();
+            if ($booking) {
+                $booking->update([
+                    'status' => 'confirmed',
+                    'payment_method' => $paymentMethod,
+                ]);
+            } else {
+                // Log jika booking tidak ditemukan (untuk debugging)
+                \Illuminate\Support\Facades\Log::warning('Booking not found for booking_code: ' . $transaction->booking_code);
+            }
+        });
 
         // Redirect ke halaman sukses
         return redirect()

@@ -44,9 +44,12 @@ class TourBookingResource extends Resource
                     Forms\Components\TextInput::make('total_price')->prefix('Rp')->disabled(),
                     Forms\Components\Select::make('payment_method')
                         ->options([
+                            '' => 'Not Selected',
+                            'transfer' => 'Bank Transfer',
                             'qris' => 'QRIS',
-                            'transfer' => 'Transfer Bank',
+                            'cash' => 'Cash',
                         ])
+                        ->nullable()
                         ->disabled(),
                     Forms\Components\Select::make('status')
                         ->options([
@@ -66,7 +69,7 @@ class TourBookingResource extends Resource
             Tables\Columns\TextColumn::make('booking_number')->searchable(),
             Tables\Columns\TextColumn::make('customer_name')->searchable(),
             Tables\Columns\TextColumn::make('tourPackage.name')->label('Tour'),
-            Tables\Columns\TextColumn::make('hotel.name')->label('Hotel')->default('-'),
+            Tables\Columns\TextColumn::make('payment_method')->label('Payment'),
             Tables\Columns\TextColumn::make('total_price')->money('IDR'),
             Tables\Columns\TextColumn::make('status')
                 ->badge()
@@ -85,7 +88,7 @@ class TourBookingResource extends Resource
                     'completed' => 'Completed',
                     'cancelled' => 'Cancelled',
                 ]),
-        ]) ->actions([
+        ])->actions([
             Tables\Actions\ViewAction::make(),
             Tables\Actions\EditAction::make(),
             Tables\Actions\DeleteAction::make(),
@@ -97,22 +100,21 @@ class TourBookingResource extends Resource
     }
 
     public static function getNavigationBadge(): ?string
-{
-    return (string) static::getModel()::count();
-}
+    {
+        return (string) static::getModel()::count();
+    }
 
-public static function getNavigationBadgeColor(): string | array | null
-{
-    $count = static::getModel()::count();
+    public static function getNavigationBadgeColor(): string | array | null
+    {
+        $count = static::getModel()::count();
 
-    return match (true) {
-        $count === 0        => 'gray',
-        $count < 5          => 'warning',
-        $count < 20         => 'success',
-        default             => 'primary',
-    };
-}
-
+        return match (true) {
+            $count === 0 => 'gray',
+            $count < 5 => 'warning',
+            $count < 20 => 'success',
+            default => 'primary',
+        };
+    }
 
     public static function getPages(): array
     {

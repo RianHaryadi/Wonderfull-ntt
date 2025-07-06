@@ -1,49 +1,47 @@
 @extends('layouts.app')
 
-@section('title', 'Pesan Destinasi - ' . $destination->name)
+@section('title', 'Pesan Destinasi - ' . ($destination->name ?? 'Destination'))
 
-{{-- Menambahkan Font Awesome untuk ikon --}}
 @push('styles')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 @endpush
 
 @section('content')
-<div class="antialiased bg-gradient-to-b from-gray-50 to-gray-100">
+<div class="antialiased bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-            
             {{-- Left Column: Destination Details --}}
             <div class="lg:col-span-3 space-y-6">
                 {{-- Destination Image Gallery --}}
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-                    <div class="relative aspect-w-16 aspect-h-9">
-                        <img src="{{ $destination->thumbnail ? asset('storage/' . $destination->thumbnail) : 'https://placehold.co/1200x800/e2e8f0/334155?text=Gambar+Destinasi' }}"
-                             alt="Gambar {{ $destination->name }}"
-                             class="w-full h-64 md:h-96 object-cover">
-                        <div class="absolute bottom-4 left-4 bg-white bg-opacity-90 rounded-lg px-3 py-1 shadow-sm">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden group">
+                    <div class="relative w-full aspect-w-16 aspect-h-9">
+                        <img src="{{ $destination->image ? asset('storage/' . ltrim($destination->image, '/')) : asset('images/fallback.jpg') }}"
+                             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                             alt="{{ $destination->name ?? 'Destination' }}">
+                        <div class="absolute bottom-4 left-4 bg-white/80 rounded-lg px-3 py-1 shadow-sm">
                             <div class="flex items-center">
                                 <i class="fas fa-map-marker-alt text-indigo-600 mr-2"></i>
-                                <span class="font-medium text-gray-800">{{ $destination->location }}</span>
+                                <span class="font-medium text-gray-800">{{ $destination->location ?? 'Unknown Location' }}</span>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="p-6 md:p-8">
-                        <div class="flex justify-between items-start">
-                            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">{{ $destination->name }}</h1>
-                            <div class="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                                <i class="fas fa-check-circle mr-1.5"></i>
-                                Tersedia
-                            </div>
-                        </div>
+                </div>
 
-                        <div class="mt-6 pt-6 border-t border-gray-200">
-                            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-info-circle text-indigo-600 mr-3"></i> Tentang Destinasi
-                            </h2>
-                            <div class="prose prose-indigo max-w-none text-gray-600">
-                                {!! $destination->description !!}
-                            </div>
+                {{-- Destination Details --}}
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <div class="flex justify-between items-start">
+                        <h1 class="text-3xl md:text-4xl font-bold text-gray-900">{{ $destination->name ?? 'Destination' }}</h1>
+                        <div class="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                            <i class="fas fa-check-circle mr-1.5"></i>
+                            Tersedia
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-info-circle text-indigo-600 mr-3"></i> Tentang Destinasi
+                        </h2>
+                        <div class="prose prose-indigo max-w-none text-gray-600">
+                            {!! $destination->description ?? '<p>Deskripsi tidak tersedia.</p>' !!}
                         </div>
                     </div>
                 </div>
@@ -52,9 +50,8 @@
             {{-- Right Column: Booking Form --}}
             <div class="lg:col-span-2">
                 <div id="bookingCard" 
-                     class="bg-white rounded-2xl shadow-lg overflow-hidden sticky top-8"
+                     class="bg-white rounded-2xl shadow-lg overflow-hidden lg:sticky lg:top-8"
                      data-price-per-ticket="{{ $destination->price ?? 0 }}">
-                    
                     {{-- Price Header --}}
                     <div class="bg-indigo-600 px-6 py-4">
                         <div class="flex justify-between items-center">
@@ -69,12 +66,12 @@
                     <div class="p-6 md:p-8">
                         <h2 class="text-2xl font-bold text-gray-900">Pesan Sekarang</h2>
                         <p class="text-gray-500 mt-1">Amankan tempat Anda sekarang juga!</p>
-                        
+
                         @if ($errors->any())
                             <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md my-4" role="alert">
                                 <div class="flex">
                                     <div class="flex-shrink-0"><i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i></div>
-                                    <div class="ml-3">
+                                    <div class connotation="ml-3">
                                         <h3 class="text-sm font-medium text-red-800">Terjadi {{ $errors->count() }} kesalahan validasi</h3>
                                         <div class="mt-2 text-sm text-red-700">
                                             <ul class="list-disc pl-5 space-y-1">
@@ -98,11 +95,11 @@
                             <div class="space-y-4">
                                 <div>
                                     <label for="customer_name" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                                    <input type="text" name="customer_name" id="customer_name" value="{{ old('customer_name', auth()->user()->name ?? '') }}" required class="block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <input type="text" name="customer_name" id="customer_name" value="{{ old('customer_name') }}" required class="block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 </div>
                                 <div>
                                     <label for="customer_email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                    <input type="email" name="customer_email" id="customer_email" value="{{ old('customer_email', auth()->user()->email ?? '') }}" required class="block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <input type="email" name="customer_email" id="customer_email" value="{{ old('customer_email') }}" required class="block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 </div>
                                 <div>
                                     <label for="customer_phone" class="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon</label>
@@ -121,7 +118,7 @@
                                     <input type="number" name="number_of_tickets" id="number_of_tickets" value="{{ old('number_of_tickets', 1) }}" min="1" max="50" required class="block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 </div>
                             </div>
-                             <hr class="my-6">
+                            <hr class="my-6">
                             {{-- Promo Code --}}
                             <div>
                                 <label for="promoCode" class="block text-sm font-medium text-gray-700 mb-1">Kode Promo (Opsional)</label>
@@ -165,17 +162,14 @@
                         </form>
 
                         {{-- Hidden Promo Data --}}
-                        <div id="promoData" class="hidden" data-promos="{{ json_encode($promos->mapWithKeys(function ($promo) {
-                            return [strtoupper($promo->code) => [
-                                'id' => $promo->id,
-                                'amount' => $promo->discount_amount ?? null,
-                                'percent' => $promo->discount_percent ?? null,
-                                'active' => $promo->active,
-                                // Tanggal sudah dalam format Y-m-d dari database/cast
-                                'valid_from' => $promo->valid_from,
-                                'valid_until' => $promo->valid_until,
-                            ]];
-                        })) }}"></div>
+                        <div id="promoData" class="hidden" data-promos="{{ $promos ? json_encode($promos->mapWithKeys(fn($promo) => [strtoupper($promo->code) => [
+                            'id' => $promo->id,
+                            'amount' => $promo->discount_amount ?? null,
+                            'percent' => $promo->discount_percent ?? null,
+                            'active' => $promo->active,
+                            'valid_from' => $promo->valid_from,
+                            'valid_until' => $promo->valid_until
+                        ]])) : '{}' }}"></div>
                     </div>
                 </div>
             </div>
@@ -220,12 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const showPromoMessage = (message, isSuccess = true) => {
         ui.promoMessage.textContent = message;
-        ui.promoMessage.className = 'mt-2 text-sm p-3 rounded-lg'; // Reset classes
-        if (isSuccess) {
-            ui.promoMessage.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-200');
-        } else {
-            ui.promoMessage.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-200');
-        }
+        ui.promoMessage.className = 'mt-2 text-sm p-3 rounded-lg';
+        ui.promoMessage.classList.add(isSuccess ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200');
+        ui.promoMessage.classList.remove('hidden');
     };
 
     // --- Core Logic ---
@@ -247,12 +238,15 @@ document.addEventListener('DOMContentLoaded', () => {
         ui.subtotalDisplay.textContent = `${formatter.format(state.pricePerTicket)} x ${state.ticketCount}`;
         ui.discountDisplay.textContent = `- ${formatter.format(state.promo.discountValue)}`;
         ui.totalPriceDisplay.textContent = formatter.format(total);
-        ui.discountAmountInput.value = state.promo.discountValue.toFixed(2);
+        ui.discountAmountInput.value = state.promo.discountValue.toFixed(0);
     };
 
     const applyPromoCode = () => {
         const code = ui.promoInput.value.trim().toUpperCase();
-        if (!code) return;
+        if (!code) {
+            showPromoMessage('Masukkan kode promo.', false);
+            return;
+        }
 
         resetPromoState();
         const promo = allPromos[code];
@@ -297,9 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Event Listeners ---
     const initializeEventListeners = () => {
         ui.ticketInput.addEventListener('input', (e) => {
-            state.ticketCount = parseInt(e.target.value, 10) || 1;
-            if(state.promo.applied) {
-                // If a promo was applied, re-apply it to recalculate percentage-based discounts
+            state.ticketCount = Math.max(1, parseInt(e.target.value, 10) || 1);
+            ui.ticketInput.value = state.ticketCount;
+            if (state.promo.applied) {
                 applyPromoCode();
             } else {
                 calculateTotals();
@@ -309,7 +303,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ui.applyPromoBtn.addEventListener('click', applyPromoCode);
 
         ui.form.addEventListener('submit', (e) => {
-            // Re-validate promo on submit just in case
             if (ui.promoInput.value && !state.promo.applied) {
                 e.preventDefault();
                 showPromoMessage('Kode promo belum diterapkan. Klik tombol "Terapkan".', false);
@@ -319,7 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initialization ---
     const init = () => {
-        // PERUBAHAN: Mengambil harga dari atribut data-*
         state.pricePerTicket = parseFloat(ui.bookingCard.dataset.pricePerTicket) || 0;
         
         if (state.pricePerTicket <= 0) {
@@ -328,7 +320,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        state.ticketCount = parseInt(ui.ticketInput.value, 10) || 1;
+        state.ticketCount = Math.max(1, parseInt(ui.ticketInput.value, 10) || 1);
+        ui.ticketInput.value = state.ticketCount;
         
         initializeEventListeners();
         calculateTotals();

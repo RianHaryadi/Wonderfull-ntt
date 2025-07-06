@@ -22,6 +22,7 @@ class TourPackage extends Model
         'description',
         'rating',
         'rating_count',
+        
     ];
 
     protected $casts = [

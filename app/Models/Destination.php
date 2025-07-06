@@ -21,7 +21,9 @@ class Destination extends Model
         'latitude',       
         'longitude',      
         'maps_url',       
-        'price',          
+        'price',
+        'payment_method',
+        'status',
     ];
 
     protected $casts = [

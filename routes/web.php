@@ -41,7 +41,7 @@ Route::get('/booking/{booking_number}', [BookingController::class, 'show'])->nam
 Route::get('/paket-tours', [PaketTourController::class, 'index'])->name('paket-tours.index');
 Route::get('/paket-tours/{id}', [PaketTourController::class, 'show'])->name('paket-tours.show');
 Route::get('/paket-tour/create/{tourPackage}', [PaketTourController::class, 'create'])->name('paket-tour.create');
-Route::post('/paket-tour/store', [PaketTourController::class, 'store'])->name('paket-tour.store');
+Route::post('/paket-tour/store', [PaketTourController::class, 'store'])->name('paket-tour.store'); 
 
 // Budaya
 Route::get('/cultures', [CultureController::class, 'index'])->name('cultures.index');

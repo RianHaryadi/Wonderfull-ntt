@@ -31,6 +31,9 @@ class CreateDestinationsTable extends Migration
             $table->decimal('longitude', 10, 7)->nullable();  // Contoh: 123.607007
             $table->string('maps_url')->nullable();           // Contoh: https://goo.gl/maps/...
 
+            // ===== Pembayaran =====
+            $table->enum('payment_method', ['transfer', 'qris', 'cash'])->nullable()->change();
+            $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled'])->default('pending')->change();
             // ===== Timestamps =====
             $table->timestamps();
         });

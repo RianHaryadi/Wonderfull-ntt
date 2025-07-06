@@ -3,19 +3,51 @@
 @section('title', 'Book Tour Package')
 
 @section('content')
-<section class="py-12 bg-gradient-to-b from-amber-50 to-white">
+<section class="py-12 bg-gradient-to-b from-blue-50 to-white">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white p-8 rounded-2xl shadow-xl border border-amber-100">
+        <div class="bg-white p-8 rounded-3xl shadow-xl border border-blue-100">
+            <!-- Progress Steps -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between relative">
+                    <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
+                    <div class="flex items-center justify-between w-full relative z-10">
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mb-2">
+                                1
+                            </div>
+                            <span class="text-sm font-medium text-blue-600">Booking Details</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold mb-2">
+                                2
+                            </div>
+                            <span class="text-sm font-medium text-gray-500">Payment</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold mb-2">
+                                3
+                            </div>
+                            <span class="text-sm font-medium text-gray-500">Confirmation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex items-center justify-between mb-8">
-                <h2 class="text-3xl font-bold text-gray-800">Book Your Adventure</h2>
-                <div class="bg-amber-100 text-amber-800 px-4 py-2 rounded-full text-sm font-medium">
-                    <i class="fas fa-clock mr-2"></i> Instant Confirmation
+                <h2 class="text-3xl font-bold text-gray-800 font-serif">Book Your Adventure</h2>
+                <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Instant Confirmation
                 </div>
             </div>
 
             @if(session('error'))
                 <div class="mb-6 p-4 text-red-600 bg-red-50 rounded-lg border border-red-200 font-medium flex items-center">
-                    <i class="fas fa-exclamation-circle mr-3"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
                     {{ session('error') }}
                 </div>
             @endif
@@ -27,34 +59,46 @@
                 <input type="hidden" name="promo_code_id" id="promoCodeId">
                 <input type="hidden" name="discount_amount" id="discountInput">
 
-                {{-- Tour Package Card --}}
-                <div class="bg-amber-50 rounded-xl p-6 border border-amber-100">
+                <!-- Tour Package Card -->
+                <div class="bg-blue-50 rounded-xl p-6 border border-blue-100 transition-all duration-300 hover:shadow-md">
                     <div class="flex flex-col md:flex-row gap-6">
-                        <div class="md:w-1/3">
-                            <div class="aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg overflow-hidden">
+                        <div class="md:w-1/3 relative">
+                            <div class="aspect-w-16 aspect-h-9 bg-gray-200 rounded-xl overflow-hidden shadow-md">
                                 <img src="{{ asset('storage/' . $tourPackage->thumbnail) }}" 
                                     alt="{{ $tourPackage->name }} tour"
-                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                                     loading="eager"
                                     width="400"
                                     height="288">
                             </div>
+                            <div class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                {{ $tourPackage->days }} Days
+                            </div>
                         </div>
                         <div class="md:w-2/3">
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $tourPackage->name }}</h3>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2 font-serif">{{ $tourPackage->name }}</h3>
                             <div class="flex items-center text-gray-600 mb-4">
-                                <i class="fas fa-map-marker-alt text-amber-500 mr-2"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
                                 <span>{{ $tourPackage->location }}</span>
                             </div>
                             <div class="grid grid-cols-2 gap-4 mb-4">
                                 <div>
-                                    <p class="text-sm text-gray-500">Duration</p>
-                                    <p class="font-medium">{{ $tourPackage->days }} days</p>
+                                    <p class="text-sm text-gray-500">Difficulty</p>
+                                    <p class="font-medium flex items-center">
+                                        @for($i = 0; $i < $tourPackage->difficulty; $i++)
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        @endfor
+                                    </p>
                                 </div>
                                 <div>
                                     <p class="text-sm text-gray-500">Price</p>
-                                    <p class="font-bold text-amber-600" id="pricePerTicketDisplay">
-                                        Rp {{ number_format($tourPackage->price, 0, ',', '.') }} / person
+                                    <p class="font-bold text-blue-600 text-lg" id="pricePerTicketDisplay">
+                                        Rp {{ number_format($tourPackage->price, 0, ',', '.') }} <span class="text-sm font-normal">/ person</span>
                                     </p>
                                     <input type="hidden" id="pricePerTicket" value="{{ $tourPackage->price }}">
                                 </div>
@@ -64,55 +108,66 @@
                     </div>
                 </div>
 
-                {{-- Customer Information --}}
+                <!-- Customer Information -->
                 <div class="space-y-6">
-                    <h3 class="text-xl font-bold text-gray-800 border-b pb-2">Your Information</h3>
+                    <h3 class="text-xl font-bold text-gray-800 border-b pb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Your Information
+                    </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {{-- Full Name --}}
+                        <!-- Full Name -->
                         <div>
                             <label for="customer_name" class="block text-sm font-medium text-gray-700 mb-1">
                                 Full Name <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-user text-gray-400"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
                                 </div>
                                 <input type="text" name="customer_name" id="customer_name" value="{{ old('customer_name') }}" required
-                                    class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:ring-amber-500 focus:border-amber-500">
+                                    class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition duration-200">
                             </div>
                             @error('customer_name')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        {{-- Email --}}
+                        <!-- Email -->
                         <div>
                             <label for="customer_email" class="block text-sm font-medium text-gray-700 mb-1">
                                 Email <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-envelope text-gray-400"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
                                 </div>
                                 <input type="email" name="customer_email" id="customer_email" value="{{ old('customer_email') }}" required
-                                    class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:ring-amber-500 focus:border-amber-500">
+                                    class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition duration-200">
                             </div>
                             @error('customer_email')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        {{-- Phone Number --}}
+                        <!-- Phone Number -->
                         <div>
                             <label for="customer_phone" class="block text-sm font-medium text-gray-700 mb-1">
                                 Phone Number <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-phone text-gray-400"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
                                 </div>
                                 <input type="tel" name="customer_phone" id="customer_phone" value="{{ old('customer_phone') }}" required
-                                    class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:ring-amber-500 focus:border-amber-500">
+                                    class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition duration-200">
                             </div>
                             @error('customer_phone')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -121,9 +176,14 @@
                     </div>
                 </div>
 
-                {{-- Booking Details --}}
+                <!-- Booking Details -->
                 <div class="space-y-6">
-                    <h3 class="text-xl font-bold text-gray-800 border-b pb-2">Booking Details</h3>
+                    <h3 class="text-xl font-bold text-gray-800 border-b pb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Booking Details
+                    </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="destination_id" class="block text-sm font-medium text-gray-700 mb-1">
@@ -131,10 +191,13 @@
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-map-marked-alt text-gray-400"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
                                 </div>
                                 <select name="destination_id" id="destination_id" required
-                                        class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:ring-amber-500 focus:border-amber-500">
+                                        class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition duration-200 appearance-none bg-white">
                                     @foreach ($destinations as $id => $name)
                                         <option value="{{ $id }}">{{ $name }}</option>
                                     @endforeach
@@ -147,10 +210,12 @@
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-ticket-alt text-gray-400"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                                    </svg>
                                 </div>
-                                <input type="number" name="number_of_tickets" id="number_of_tickets" min="1" value="1" required
-                                       class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:ring-amber-500 focus:border-amber-500">
+                                <input type="number" name="number_of_tickets" id="number_of_tickets" min="1" max="10" value="1" required
+                                       class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition duration-200">
                             </div>
                         </div>
                         <div>
@@ -159,12 +224,13 @@
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-calendar-day text-gray-400"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
                                 </div>
                                 <input type="date" name="booking_date" id="booking_date" required min="{{ date('Y-m-d') }}"
-                                       class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:ring-amber-500 focus:border-amber-500">
+                                       class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition duration-200">
                             </div>
-                        </div>
                         </div>
                     </div>
                     <div>
@@ -173,32 +239,43 @@
                         </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 pt-3 flex items-start pointer-events-none">
-                                <i class="fas fa-comment-dots text-gray-400"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                </svg>
                             </div>
                             <textarea name="special_request" id="special_request" rows="3"
-                                      class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:ring-amber-500 focus:border-amber-500"></textarea>
+                                      class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition duration-200"
+                                      placeholder="Any special requirements or notes..."></textarea>
                         </div>
                     </div>
                 </div>
 
-                {{-- Promo Code Section --}}
-                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <!-- Promo Code Section -->
+                <div class="bg-blue-50 rounded-xl p-6 border border-blue-100 transition-all duration-300 hover:shadow-md">
                     <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-tag text-indigo-600 mr-3"></i> Apply Promo Code
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                        </svg>
+                        Apply Promo Code
                     </h3>
                     <p class="text-gray-600 mb-4">Enter your promo code below to get discounts</p>
                     
                     <div class="flex flex-col sm:flex-row gap-3">
                         <div class="flex-grow relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-ticket-alt text-gray-400"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                                </svg>
                             </div>
                             <input type="text" id="promoInput" name="promo_code" 
-                                   class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:ring-indigo-500 focus:border-indigo-500" 
+                                   class="pl-10 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition duration-200" 
                                    placeholder="SUMMER2023">
                         </div>
                         <button type="button" id="applyPromoBtn" 
-                                class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
+                                class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-md transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
                             Apply Code
                         </button>
                     </div>
@@ -207,9 +284,14 @@
                     <div id="discountDisplay" class="mt-3 text-green-600 font-medium"></div>
                 </div>
 
-                {{-- Price Summary --}}
-                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Price Summary</h3>
+                <!-- Price Summary -->
+                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Price Summary
+                    </h3>
                     <div class="space-y-3">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Base Price</span>
@@ -230,17 +312,20 @@
                         <div class="border-t border-gray-200 pt-3 mt-3">
                             <div class="flex justify-between font-bold">
                                 <span class="text-gray-800">Total Payment</span>
-                                <span id="totalPriceDisplay" class="text-amber-600 text-xl">Rp {{ number_format($tourPackage->price, 0, ',', '.') }}</span>
+                                <span id="totalPriceDisplay" class="text-blue-600 text-xl">Rp {{ number_format($tourPackage->price, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {{-- Submit Button --}}
+                <!-- Submit Button -->
                 <div class="pt-2">
                     <button type="submit"
-                            class="w-full inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-lg font-bold rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
-                        <i class="fas fa-check-circle mr-3"></i> Confirm Booking
+                            class="w-full inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-lg font-bold rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Confirm Booking
                     </button>
                 </div>
             </form>
@@ -248,7 +333,7 @@
     </div>
 </section>
 
-{{-- Promo JSON --}}
+<!-- Promo JSON -->
 <div id="promoData" data-promos='@json($promoJson)'></div>
 
 <script>
