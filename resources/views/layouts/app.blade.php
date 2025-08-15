@@ -68,16 +68,6 @@
                 <a href="{{ route('booking.checkForm') }}" class="relative bg-yellow-300 text-blue-900 px-5 py-2 rounded-full shadow-md hover:bg-yellow-400 transition font-bold ripple-btn">
                     Cek Booking
                 </a>
-
-                <!-- Cart Icon -->
-                <a href="#" aria-label="Shopping Cart" class="relative flex items-center justify-center w-12 h-12 bg-yellow-300 text-blue-900 rounded-full hover:bg-yellow-400 transition duration-300 shadow-lg">
-                    <i class="fas fa-shopping-cart text-xl"></i>
-                    @if(session('cart_count', 0) > 0)
-                        <span class="absolute -top-1.5 -right-1.5 bg-white text-blue-900 text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
-                            {{ session('cart_count') }}
-                        </span>
-                    @endif
-                </a>
             </div>
 
             <!-- Mobile Toggle -->
