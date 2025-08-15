@@ -62,7 +62,7 @@
                 <a href="{{ route('hotels.index') }}" class="text-white font-medium hover:text-yellow-300 px-3 py-2 rounded-lg transition hover:bg-white/10">Hotel</a>
                 <a href="{{ route('paket-tours.index') }}" class="text-white font-medium hover:text-yellow-300 px-3 py-2 rounded-lg transition hover:bg-white/10">Tour</a>
                 <a href="{{ route('cultures.index') }}" class="text-white font-medium hover:text-yellow-300 px-3 py-2 rounded-lg transition hover:bg-white/10">Culture</a>
-                <a href="#contact" class="text-white font-medium hover:text-yellow-300 px-3 py-2 rounded-lg transition hover:bg-white/10">Contact</a>
+                
 
                 <!-- Cek Booking Button -->
                 <a href="{{ route('booking.checkForm') }}" class="relative bg-yellow-300 text-blue-900 px-5 py-2 rounded-full shadow-md hover:bg-yellow-400 transition font-bold ripple-btn">
@@ -96,7 +96,6 @@
         <a href="{{ route('hotels.index') }}" class="block py-2 px-4 text-white rounded hover:bg-white/10">Hotel</a>
         <a href="{{ route('paket-tours.index') }}" class="block py-2 px-4 text-white rounded hover:bg-white/10">Tour</a>
         <a href="{{ route('cultures.index') }}" class="block py-2 px-4 text-white rounded hover:bg-white/10">Culture</a>
-        <a href="#contact" class="block py-2 px-4 text-white rounded hover:bg-white/10">Contact</a>
         <a href="{{ route('booking.checkForm') }}" class="block mt-4 py-2 px-4 text-blue-900 font-bold bg-yellow-300 rounded hover:bg-yellow-400 text-center shadow-md">
             Cek Booking
         </a>
