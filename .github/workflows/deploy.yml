@@ -22,7 +22,7 @@ jobs:
           echo "Debug selesai, melanjutkan deployment..."
           
           # BAGIAN DEPLOYMENT ASLI
-          cd /home/wonderful-ntt.my.id/public_html
+          cd /home/wonderfull-ntt.my.id/public_html
           git pull origin main
           
           # OPSIONAL: Jalankan perintah lain yang spesifik untuk Laravel
