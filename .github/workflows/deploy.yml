@@ -1,0 +1,29 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main # atau master, sesuaikan dengan nama branch utama Anda
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: SSH and Deploy
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          # Masuk ke direktori proyek di server Anda
+          cd /home/wonderful-ntt.my.id/public_html  # <-- PATH INI DIAMBIL DARI GAMBAR ANDA
+          
+          # Jalankan perintah git untuk update
+          git pull origin main
+          
+          # OPSIONAL: Jalankan perintah lain yang spesifik untuk Laravel
+          echo "🚀 Deployment finished, running Laravel commands..."
+          composer install --no-interaction --prefer-dist --optimize-autoloader # Install dependency
+          php artisan migrate --force # Jalankan migrasi database
+          php artisan optimize:clear # Clear cache

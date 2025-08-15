@@ -18,7 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\IconColumn;
 use App\Filament\Resources\DestinationResource\Pages;
-
+    
 class DestinationResource extends Resource
 {
     protected static ?string $model = Destination::class;
