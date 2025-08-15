@@ -16,20 +16,20 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          # Pindah ke direktori proyek
-          cd /home/wonderful-ntt.my.id/public_html
-          
-          # Perintah ini ditambahkan untuk mengatasi error 'dubious ownership'
-          git config --global --add safe.directory /home/wonderfull-ntt.my.id/public_html
-          
-          # Tarik perubahan terbaru dari GitHub
-          git pull origin main
-          
-          echo "🚀 Deployment finished, running Laravel commands..."
-          
-          # Menambahkan ini agar Composer tidak menampilkan warning saat dijalankan oleh root
-          export COMPOSER_ALLOW_SUPERUSER=1
-          
-          composer install --no-interaction --prefer-dist --optimize-autoloader
-          php artisan migrate --force
-          php artisan optimize:clear
+            # Pindah ke direktori proyek dengan path yang sudah benar
+            cd /home/wonderfull-ntt.my.id/public_html
+            
+            # Perintah ini juga menggunakan path yang sudah benar
+            git config --global --add safe.directory /home/wonderfull-ntt.my.id/public_html
+            
+            # Tarik perubahan terbaru dari GitHub
+            git pull origin main
+            
+            echo "🚀 Deployment finished, running Laravel commands..."
+            
+            # Menambahkan ini agar Composer tidak menampilkan warning saat dijalankan oleh root
+            export COMPOSer_ALLOW_SUPERUSER=1
+            
+            composer install --no-interaction --prefer-dist --optimize-autoloader
+            php artisan migrate --force
+            php artisan optimize:clear
