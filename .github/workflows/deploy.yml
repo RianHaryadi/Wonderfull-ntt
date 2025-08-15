@@ -3,7 +3,7 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - main # atau master, sesuaikan dengan nama branch utama Anda
+      - main
 
 jobs:
   deploy:
@@ -16,17 +16,20 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          # BAGIAN DEBUGGING DITEMPATKAN DI ATAS
-          echo "Mencoba melakukan debug pada host..."
-          echo "Host yang terbaca adalah: ${{ secrets.SSH_HOST }}"
-          echo "Debug selesai, melanjutkan deployment..."
+          # Pindah ke direktori proyek
+          cd /home/wonderful-ntt.my.id/public_html
           
-          # BAGIAN DEPLOYMENT ASLI
-          cd /home/wonderfull-ntt.my.id/public_html
+          # Perintah ini ditambahkan untuk mengatasi error 'dubious ownership'
+          git config --global --add safe.directory /home/wonderful-ntt.my.id/public_html
+          
+          # Tarik perubahan terbaru dari GitHub
           git pull origin main
           
-          # OPSIONAL: Jalankan perintah lain yang spesifik untuk Laravel
           echo "🚀 Deployment finished, running Laravel commands..."
+          
+          # Menambahkan ini agar Composer tidak menampilkan warning saat dijalankan oleh root
+          export COMPOSER_ALLOW_SUPERUSER=1
+          
           composer install --no-interaction --prefer-dist --optimize-autoloader
           php artisan migrate --force
-          php artisan optimize:clear    
+          php artisan optimize:clear
