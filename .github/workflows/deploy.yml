@@ -16,14 +16,17 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          # Masuk ke direktori proyek di server Anda
-          cd /home/wonderful-ntt.my.id/public_html  # <-- PATH INI DIAMBIL DARI GAMBAR ANDA
+          # BAGIAN DEBUGGING DITEMPATKAN DI ATAS
+          echo "Mencoba melakukan debug pada host..."
+          echo "Host yang terbaca adalah: ${{ secrets.SSH_HOST }}"
+          echo "Debug selesai, melanjutkan deployment..."
           
-          # Jalankan perintah git untuk update
+          # BAGIAN DEPLOYMENT ASLI
+          cd /home/wonderful-ntt.my.id/public_html
           git pull origin main
           
           # OPSIONAL: Jalankan perintah lain yang spesifik untuk Laravel
           echo "🚀 Deployment finished, running Laravel commands..."
-          composer install --no-interaction --prefer-dist --optimize-autoloader # Install dependency
-          php artisan migrate --force # Jalankan migrasi database
-          php artisan optimize:clear # Clear cache
+          composer install --no-interaction --prefer-dist --optimize-autoloader
+          php artisan migrate --force
+          php artisan optimize:clear    
