@@ -18,10 +18,10 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           # Pindah ke direktori proyek dengan path yang sudah benar
-          cd /home/pudingtepuni.store/public_html
+          cd /home/wonderfull-ntt.my.id/public_html
           
           # Perintah ini juga menggunakan path yang sudah benar
-          git config --global --add safe.directory /home/pudingtepuni.store/public_html
+          git config --global --add safe.directory /home/wonderfull-ntt.my.id/public_html
           
           # Tarik perubahan terbaru dari GitHub
           git pull origin main
