@@ -20,7 +20,7 @@ jobs:
           cd /home/wonderful-ntt.my.id/public_html
           
           # Perintah ini ditambahkan untuk mengatasi error 'dubious ownership'
-          git config --global --add safe.directory /home/wonderful-ntt.my.id/public_html
+          git config --global --add safe.directory /home/wonderfull-ntt.my.id/public_html
           
           # Tarik perubahan terbaru dari GitHub
           git pull origin main
