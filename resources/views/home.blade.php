@@ -184,13 +184,6 @@
                                 <div>
                                     <h3 class="text-xl font-bold text-gray-800 truncate">{{ $hotel->name }}</h3>
                                     
-                                    <div class="flex items-center text-yellow-500 text-sm mt-1">
-                                        @for($i = 0; $i < 5; $i++)
-                                            <i class="fas fa-star {{ $i < floor($hotel->rating ?? 0) ? 'text-yellow-400' : 'text-gray-300' }}"></i>
-                                        @endfor
-                                        <span class="ml-2 text-gray-500">({{ $hotel->rating_count ?? rand(150, 500) }} reviews)</span>
-                                    </div>
-
                                     <p class="text-gray-500 text-sm mt-2 flex items-center">
                                         <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>
                                         {{ $hotel->location ?? 'East Nusa Tenggara' }}
@@ -309,11 +302,7 @@
                             <span class="text-blue-600 font-bold">IDR {{ number_format($package->price, 0, ',', '.') }}</span>
                         </div>
                         <div class="mt-4 flex gap-2">
-                        <a href="{{ route('paket-tours.show', $package->id) }}"
-                        class="flex-1 text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition font-semibold text-sm">
-                            View Details
-                        </a>
-                        <a href="{{ route('paket-tours.show', $package->id) }}#booking"
+                        <a href="{{ route('paket-tours.create', $package->id) }}#booking"
                         class="flex-1 text-center bg-white text-blue-600 border border-blue-600 py-2 rounded-md hover:bg-blue-50 transition font-semibold text-sm">
                             Book Now
                         </a>
