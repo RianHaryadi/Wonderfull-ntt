@@ -197,11 +197,6 @@
                                 </div>
                             @endif
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                                <a href="{{ route('paket-tours.show', $paket->id) }}" 
-                                class="bg-amber-500 text-gray-900 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-amber-400 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all transform translate-y-3 group-hover:translate-y-0 duration-300 shadow-lg hover:shadow-amber-500/30" 
-                                aria-label="View details for {{ $paket->name }}">
-                                    View Details
-                                </a>
                                 <a href="{{ route('paket-tour.create', $paket) }}"
                                 class="ml-2 bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-all transform group-hover:translate-y-0 duration-300 shadow-lg"
                                 aria-label="Book {{ $paket->name }}">

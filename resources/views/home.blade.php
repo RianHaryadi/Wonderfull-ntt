@@ -183,7 +183,7 @@
                             <div class="p-6 flex flex-col justify-between flex-1">
                                 <div>
                                     <h3 class="text-xl font-bold text-gray-800 truncate">{{ $hotel->name }}</h3>
-                                    
+
                                     <p class="text-gray-500 text-sm mt-2 flex items-center">
                                         <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>
                                         {{ $hotel->location ?? 'East Nusa Tenggara' }}
@@ -302,7 +302,7 @@
                             <span class="text-blue-600 font-bold">IDR {{ number_format($package->price, 0, ',', '.') }}</span>
                         </div>
                         <div class="mt-4 flex gap-2">
-                        <a href="{{ route('paket-tours.create', $package->id) }}#booking"
+                        <a href="{{ route('paket-tour.create', $package->id) }}#booking"
                         class="flex-1 text-center bg-white text-blue-600 border border-blue-600 py-2 rounded-md hover:bg-blue-50 transition font-semibold text-sm">
                             Book Now
                         </a>
