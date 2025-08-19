@@ -27,7 +27,7 @@ class LoginForm extends Component
 
     public function render()
     {
-        return view('livewire.login-form')->layout('layouts.login');
+        return view('livewire.login-Form')->layout('layouts.login');
     }
 }
 
