@@ -23,13 +23,11 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
             ->id('admin')
-            ->font('Nunito')
             ->path('admin')
-            ->login(null)
+            ->login()
             ->colors([
-                'primary' => '#1D4ED8'
+                'primary' => Color::Amber,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -38,13 +36,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                \App\Filament\Widgets\TotalRevenueOverview::class,
-                \App\Filament\Widgets\MonthlyTransactionChart::class,
-                \App\Filament\Widgets\PaymentMethodPieChart::class,
-                \App\Filament\Widgets\TopTourPackagesChart::class,
-                \App\Filament\Widgets\OccupancyRateTable::class,
-                // Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
+                Widgets\AccountWidget::class,
+                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

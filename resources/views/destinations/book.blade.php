@@ -71,7 +71,7 @@
                             <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md my-4" role="alert">
                                 <div class="flex">
                                     <div class="flex-shrink-0"><i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i></div>
-                                    <div class connotation="ml-3">
+                                    <div class="ml-3">
                                         <h3 class="text-sm font-medium text-red-800">Terjadi {{ $errors->count() }} kesalahan validasi</h3>
                                         <div class="mt-2 text-sm text-red-700">
                                             <ul class="list-disc pl-5 space-y-1">
@@ -89,6 +89,7 @@
                             @csrf
                             <input type="hidden" name="destination_id" value="{{ $destination->id }}">
                             <input type="hidden" name="promo_code_id" id="promoCodeId" value="{{ old('promo_code_id') }}">
+                            {{-- Input hidden discountAmount --}}
                             <input type="hidden" name="discount_amount" id="discountAmount" value="{{ old('discount_amount', 0) }}">
 
                             {{-- Customer Information --}}
@@ -161,15 +162,17 @@
                             </p>
                         </form>
 
-                        {{-- Hidden Promo Data --}}
-                        <div id="promoData" class="hidden" data-promos="{{ $promos ? json_encode($promos->mapWithKeys(fn($promo) => [strtoupper($promo->code) => [
-                            'id' => $promo->id,
-                            'amount' => $promo->discount_amount ?? null,
-                            'percent' => $promo->discount_percent ?? null,
-                            'active' => $promo->active,
-                            'valid_from' => $promo->valid_from,
-                            'valid_until' => $promo->valid_until
-                        ]])) : '{}' }}"></div>
+                        {{-- Hidden Promo Data dengan Mapping yang Benar --}}
+                        <div id="promoData" class="hidden" 
+                            data-promos='{{ $promos ? json_encode($promos->mapWithKeys(fn($promo) => [strtoupper($promo->code) => [
+                                "id" => $promo->id,
+                                "amount" => (float) ($promo->discount_amount ?? 0),  
+                                "percent" => (float) ($promo->discount_percent ?? 0), 
+                                "active" => $promo->active,
+                                "valid_from" => $promo->valid_from,
+                                "valid_until" => $promo->valid_until
+                            ]])) : "{}" }}'>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -179,19 +182,14 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- State Management ---
+    // --- State Variables ---
     const state = {
         pricePerTicket: 0,
         ticketCount: 1,
-        promo: {
-            id: null,
-            code: '',
-            discountValue: 0,
-            applied: false
-        }
+        promo: null // Struktur: { id, code, amount, percent }
     };
 
-    // --- DOM Element Cache ---
+    // --- DOM Elements ---
     const ui = {
         bookingCard: document.getElementById('bookingCard'),
         ticketInput: document.getElementById('number_of_tickets'),
@@ -206,128 +204,157 @@ document.addEventListener('DOMContentLoaded', () => {
         form: document.getElementById('bookingForm'),
     };
     
-    // --- All Promo Codes from Server ---
-    const allPromos = JSON.parse(ui.bookingCard.querySelector('#promoData').dataset.promos || '{}');
+    // --- Load Data ---
+    // Parsing JSON dengan aman
+    const rawPromoData = ui.bookingCard.querySelector('#promoData').dataset.promos;
+    const allPromos = JSON.parse(rawPromoData || '{}');
+    
+    // Set harga awal
+    state.pricePerTicket = parseFloat(ui.bookingCard.dataset.pricePerTicket) || 0;
+    state.ticketCount = Math.max(1, parseInt(ui.ticketInput.value, 10) || 1);
 
     // --- Helper Functions ---
-    const formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
+    const formatRupiah = (number) => {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+    };
     
-    const showPromoMessage = (message, isSuccess = true) => {
-        ui.promoMessage.textContent = message;
-        ui.promoMessage.className = 'mt-2 text-sm p-3 rounded-lg';
-        ui.promoMessage.classList.add(isSuccess ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200');
+    const showMessage = (msg, type) => {
+        ui.promoMessage.textContent = msg;
+        ui.promoMessage.className = `mt-2 text-sm p-3 rounded-lg ${type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`;
         ui.promoMessage.classList.remove('hidden');
     };
 
-    // --- Core Logic ---
-    const resetPromoState = () => {
-        state.promo.id = null;
-        state.promo.code = '';
-        state.promo.discountValue = 0;
-        state.promo.applied = false;
-        
-        ui.promoCodeIdInput.value = '';
-        ui.discountAmountInput.value = '0';
-        ui.promoMessage.classList.add('hidden');
-    };
-
+    // --- Core Calculation Logic ---
     const calculateTotals = () => {
         const subtotal = state.pricePerTicket * state.ticketCount;
-        const total = Math.max(0, subtotal - state.promo.discountValue);
+        let discountValue = 0;
 
-        ui.subtotalDisplay.textContent = `${formatter.format(state.pricePerTicket)} x ${state.ticketCount}`;
-        ui.discountDisplay.textContent = `- ${formatter.format(state.promo.discountValue)}`;
-        ui.totalPriceDisplay.textContent = formatter.format(total);
-        ui.discountAmountInput.value = state.promo.discountValue.toFixed(0);
+        // Cek apakah ada promo aktif di state
+        if (state.promo) {
+            // Logika Prioritas: Persen dulu, baru nominal
+            if (state.promo.percent > 0) {
+                discountValue = subtotal * (state.promo.percent / 100);
+            } else if (state.promo.amount > 0) {
+                discountValue = state.promo.amount;
+            }
+        }
+
+        // Cegah diskon > subtotal
+        if (discountValue > subtotal) discountValue = subtotal;
+
+        const total = Math.max(0, subtotal - discountValue);
+
+        // Update UI
+        ui.subtotalDisplay.textContent = `${formatRupiah(state.pricePerTicket)} x ${state.ticketCount}`;
+        ui.discountDisplay.textContent = `- ${formatRupiah(discountValue)}`;
+        ui.totalPriceDisplay.textContent = formatRupiah(total);
+        
+        // Update Hidden Input untuk dikirim ke Server
+        ui.discountAmountInput.value = Math.floor(discountValue); // Kirim angka bulat
     };
 
+    // --- Apply Promo Logic ---
     const applyPromoCode = () => {
         const code = ui.promoInput.value.trim().toUpperCase();
+        
+        // Reset state jika input kosong
         if (!code) {
-            showPromoMessage('Masukkan kode promo.', false);
-            return;
-        }
-
-        resetPromoState();
-        const promo = allPromos[code];
-
-        if (!promo || !promo.active) {
-            showPromoMessage('Kode promo tidak valid atau tidak aktif.', false);
+            state.promo = null;
+            ui.promoCodeIdInput.value = '';
             calculateTotals();
+            showMessage('Masukkan kode promo.', 'error');
             return;
         }
 
+        const promoData = allPromos[code];
+
+        // Validasi Ketersediaan
+        if (!promoData) {
+            state.promo = null;
+            calculateTotals();
+            showMessage('Kode promo tidak ditemukan.', 'error');
+            return;
+        }
+
+        // Validasi Status Aktif
+        if (!promoData.active) {
+            state.promo = null;
+            calculateTotals();
+            showMessage('Kode promo tidak aktif.', 'error');
+            return;
+        }
+
+        // Validasi Tanggal
         const today = new Date().toISOString().split('T')[0];
-        if (promo.valid_from && promo.valid_from > today) {
-            showPromoMessage(`Promo baru berlaku mulai ${promo.valid_from}.`, false);
-            calculateTotals();
+        if (promoData.valid_from && promoData.valid_from > today) {
+            showMessage(`Promo baru berlaku mulai ${promoData.valid_from}.`, 'error');
             return;
         }
-        if (promo.valid_until && promo.valid_until < today) {
-            showPromoMessage(`Promo sudah kadaluarsa pada ${promo.valid_until}.`, false);
-            calculateTotals();
+        if (promoData.valid_until && promoData.valid_until < today) {
+            showMessage('Kode promo sudah kadaluarsa.', 'error');
             return;
         }
 
-        // Calculate discount
-        let discount = 0;
-        const subtotal = state.pricePerTicket * state.ticketCount;
-        if (promo.percent > 0) {
-            discount = subtotal * (promo.percent / 100);
-        } else if (promo.amount > 0) {
-            discount = promo.amount;
+        // Validasi Nilai Diskon (Pastikan Float)
+        const pPercent = parseFloat(promoData.percent) || 0;
+        const pAmount = parseFloat(promoData.amount) || 0;
+
+        if (pPercent <= 0 && pAmount <= 0) {
+            showMessage('Promo valid tapi tidak memiliki nilai diskon.', 'error');
+            return;
         }
 
-        if (discount > 0) {
-            state.promo = { id: promo.id, code: code, discountValue: discount, applied: true };
-            ui.promoCodeIdInput.value = promo.id;
-            showPromoMessage(`Promo "${code}" berhasil diterapkan!`, true);
-        } else {
-            showPromoMessage('Promo valid, namun tidak memberikan diskon.', false);
-        }
+        // Set State Promo Berhasil
+        state.promo = {
+            id: promoData.id,
+            code: code,
+            percent: pPercent,
+            amount: pAmount
+        };
+
+        ui.promoCodeIdInput.value = promoData.id;
+        
+        // Pesan Sukses
+        const diskonInfo = pPercent > 0 ? `${pPercent}%` : formatRupiah(pAmount);
+        showMessage(`Kode "${code}" berhasil! Hemat ${diskonInfo}`, 'success');
+
         calculateTotals();
     };
 
     // --- Event Listeners ---
-    const initializeEventListeners = () => {
-        ui.ticketInput.addEventListener('input', (e) => {
-            state.ticketCount = Math.max(1, parseInt(e.target.value, 10) || 1);
-            ui.ticketInput.value = state.ticketCount;
-            if (state.promo.applied) {
-                applyPromoCode();
-            } else {
-                calculateTotals();
-            }
-        });
-
-        ui.applyPromoBtn.addEventListener('click', applyPromoCode);
-
-        ui.form.addEventListener('submit', (e) => {
-            if (ui.promoInput.value && !state.promo.applied) {
-                e.preventDefault();
-                showPromoMessage('Kode promo belum diterapkan. Klik tombol "Terapkan".', false);
-            }
-        });
-    };
-
-    // --- Initialization ---
-    const init = () => {
-        state.pricePerTicket = parseFloat(ui.bookingCard.dataset.pricePerTicket) || 0;
+    
+    // 1. Input Jumlah Tiket berubah -> Hitung ulang total & diskon
+    ui.ticketInput.addEventListener('input', (e) => {
+        let val = parseInt(e.target.value, 10);
+        if (isNaN(val) || val < 1) val = 1;
+        state.ticketCount = val;
         
-        if (state.pricePerTicket <= 0) {
-            console.error('Harga per tiket tidak valid.');
-            ui.bookingCard.innerHTML = '<div class="p-8 text-center text-red-500">Gagal memuat detail harga. Silakan coba lagi nanti.</div>';
-            return;
-        }
+        // Update tampilan input jika user mengetik angka aneh
+        // ui.ticketInput.value = val; 
         
-        state.ticketCount = Math.max(1, parseInt(ui.ticketInput.value, 10) || 1);
-        ui.ticketInput.value = state.ticketCount;
-        
-        initializeEventListeners();
         calculateTotals();
-    };
+    });
 
-    init();
+    // 2. Tombol Terapkan Promo
+    ui.applyPromoBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        applyPromoCode();
+    });
+
+    // 3. Submit Form check
+    ui.form.addEventListener('submit', (e) => {
+        // Peringatan jika kode diisi tapi belum diapply
+        if (ui.promoInput.value && !state.promo) {
+            const confirmSubmit = confirm('Anda memasukkan kode promo tapi belum menerapkannya. Lanjutkan tanpa diskon?');
+            if (!confirmSubmit) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    // --- Init ---
+    // Hitung total awal saat halaman dimuat
+    calculateTotals();
 });
 </script>
 @endsection
